@@ -1,0 +1,61 @@
+.error {
+    color: red;
+}
+
+.info {
+    color: blue;
+}
+
+.hidden {
+    display: none;
+}
+
+/*body {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url('clock.gif');
+}*/
+
+td {
+    border-style: solid;
+}
+
+table {
+    width: 70% ;
+}
+td {
+    width: 8% ;
+}
+
+#bin {
+    padding-left: 75%;
+}
+
+#scheduleTable{
+    float:left;
+}
+#toolbox {
+    padding-left: 75%;
+}
+
+img {
+    max-width: 50%;
+    max-height: 50%;
+}
+
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.taskButton {
+    width: 300px;
+}
+
+
+#task-title {
+    width: 254px;
+}
