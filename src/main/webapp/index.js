@@ -82,20 +82,14 @@ function onOtherResponse(targetEl, xhr) {
     }
 }
 
-function hasAuthorization() {
-    return localStorage.getItem('user') !== null;
+
+
+function storeItem(name, value) {
+    return localStorage.setItem(name, JSON.stringify(value));
 }
 
-function setAuthorization(user) {
-    return localStorage.setItem('user', JSON.stringify(user));
-}
-
-function getAuthorization() {
-    return JSON.parse(localStorage.getItem('user'));
-}
-
-function setUnauthorized() {
-    return localStorage.removeItem('user');
+function retrieveItem(name) {
+    return JSON.parse(localStorage.getItem(name));
 }
 
 function onLoad() {
@@ -123,6 +117,27 @@ function onLoad() {
 
     if (hasAuthorization()) {
         onProfileLoad(getAuthorization());
+    }
+}
+
+class XhrSender {
+    constructor(method, url, onResponse) {
+        this.method = method;
+        this.url = url;
+        this.onResponse = onResponse;
+        this.params = new URLSearchParams();
+    }
+
+    addParam(name, value) {
+        this.params.append(name, value)
+    }
+
+    send() {
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', this.onResponse);
+        xhr.addEventListener('error', onNetworkError);
+        xhr.open(this.method, this.url);
+        xhr.send(this.params);
     }
 }
 

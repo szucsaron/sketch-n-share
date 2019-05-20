@@ -2,11 +2,11 @@ package com.codecool.sketch.servlet;
 
 
 
-import com.codecool.sketch.dao.Database.DatabaseUserDao;
+import com.codecool.sketch.dao.database.DatabaseUserDao;
 import com.codecool.sketch.dao.UserDao;
 import com.codecool.sketch.model.User;
 import com.codecool.sketch.service.exception.ServiceException;
-import com.codecool.sketch.service.simple.SimpleLoginService;
+import com.codecool.sketch.service.simple.SimpleUserService;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,17 +23,17 @@ public class LoginServlet extends AbstractServlet{
         try (Connection connection = getConnection(req.getServletContext())) {
 
             UserDao userDao = new DatabaseUserDao(connection);
-            SimpleLoginService simpleLoginService = new SimpleLoginService(userDao);
+            SimpleUserService simpleUserService = new SimpleUserService(userDao);
 
-            String email = req.getParameter("email");
+            String email = req.getParameter("name");
             String password = req.getParameter("password");
 
-            User user = simpleLoginService.loginUser(email, password);
+            User user = simpleUserService.fetch(email, password);
             req.getSession().setAttribute("user", user);
 
             sendMessage(resp, HttpServletResponse.SC_OK, user);
 
-            throw new ServiceException();
+
         } catch (ServiceException ex) {
             sendMessage(resp, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
         } catch (SQLException ex) {

@@ -5,26 +5,23 @@ import com.codecool.sketch.model.User;
 
 import java.sql.SQLException;
 
-import com.codecool.sketch.dao.UserDao;
-import com.codecool.sketch.model.User;
 import com.codecool.sketch.service.LoginService;
 import com.codecool.sketch.service.exception.ServiceException;
 //import javafx.concurrent.Service;
-import javax.sql.rowset.serial.SerialException;
-import java.sql.SQLException;
 
-public final class SimpleLoginService implements LoginService {
+
+public final class SimpleUserService implements LoginService {
 
     private final UserDao userDao;
 
-    public SimpleLoginService(UserDao userDao) {
+    public SimpleUserService(UserDao userDao) {
         this.userDao = userDao;
     }
 
 
-    public User loginUser(String name, String password) throws SQLException, ServiceException {
+    public User fetch(String name, String password) throws SQLException, ServiceException {
         try {
-            User user = userDao.findByName(name);
+            User user = userDao.fetchByName(name);
             if (user == null || !user.getPassword().equals(password)) {
                 throw new ServiceException("Bad login");
             }

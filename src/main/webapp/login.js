@@ -1,8 +1,24 @@
+function hasAuthorization() {
+    return localStorage.getItem('user') !== null;
+}
+
+function setAuthorization(user) {
+    return localStorage.setItem('user', JSON.stringify(user));
+}
+
+function getAuthorization() {
+    return JSON.parse(localStorage.getItem('user'));
+}
+
+function setUnauthorized() {
+    return localStorage.removeItem('user');
+}
+
 function onLoginResponse() {
     if (this.status === OK) {
         const user = JSON.parse(this.responseText);
         setAuthorization(user);
-        onProfileLoad(user);
+        navigateToFoldersViewer();
     } else {
         onOtherResponse(loginContentDivEl, this);
     }
@@ -11,24 +27,35 @@ function onLoginResponse() {
 function onLoginButtonClicked() {
     const loginFormEl = document.forms['login-form'];
 
-    const emailInputEl = loginFormEl.querySelector('input[name="email"]');
+    const emailInputEl = loginFormEl.querySelector('input[name="name"]');
     const passwordInputEl = loginFormEl.querySelector('input[name="password"]');
 
-    const email = emailInputEl.value;
+    const name = emailInputEl.value;
     const password = passwordInputEl.value;
 
-    const params = new URLSearchParams();
-    params.append('email', email);
-    params.append('password', password);
+    const xhr = new XhrSender('POST', 'login', onLoginResponse);
+    xhr.addParam('name', name);
+    xhr.addParam('password', password);
+    xhr.send();
 
-    const xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', onLoginResponse);
-    xhr.addEventListener('error', onNetworkError);
-    xhr.open('POST', 'login');
-    xhr.send(params);
 }
 
 function onRegisterButtonClicked() {
     showContents(['register-content']);
+}
+
+function onLogoutResponse() {
+    if (this.status === OK) {
+        setUnauthorized();
+        clearMessages();
+        showContents(['login-content'])
+    } else {
+        onOtherResponse(logoutContentDivEl, this);
+    }
+}
+
+function onLogoutButtonClicked(event) {
+    const xhr = new XhrSender('POST', 'protected/logout', onLogoutResponse)
+    xhr.send();
 }
 

@@ -10,20 +10,22 @@
     <c:url value="/index.js" var="indexScriptUrl"/>
     <c:url value="/login.js" var="loginScriptUrl"/>
     <c:url value="/logout.js" var="logoutScriptUrl"/>
-    <c:url value="/welcome.js" var="welcomeScriptUrl"/>
     <c:url value="/register.js" var="registerScriptUrl"/>
+    <c:url value="/folders-viewer.js" var="foldersViewerUrl"/>
+
     <script src="${indexScriptUrl}"></script>
     <script src="${loginScriptUrl}"></script>
-    <script src="${welcomeScriptUrl}"></script>
     <script src="${logoutScriptUrl}"></script>
     <script src="${registerScriptUrl}"></script>
+    <script src="${foldersViewerUrl}"></script>
+
     <link rel="stylesheet" type="text/css" href="${styleUrl}">
 </head>
 <body>
     <div id="login-content" class="content">
         <h1>Login</h1>
         <form id="login-form" onsubmit="return false;">
-            <input type="text" name="email" placeholder="Email">
+            <input type="text" name="name" placeholder="Name">
             <input type="password" name="password" placeholder="Password">
             <button id="login-button">Login</button>
             <button id="register-button">Register</button>
@@ -42,6 +44,18 @@
             <br>
             <button id="registration-button">Register</button>
         </form>
+    </div>
+    <div id="folders-viewer" class="hidden content">
+        These are folders
+    </div>
+    <div id="folder-content" class="hidden content">
+            This is a folder
+    </div>
+    <div id="canvas" class="hidden content">
+            This is a canvas
+    </div>
+    <div id="navbar" >
+        <button id="logout-button">Logout</button>
     </div>
 </body>
 </html>

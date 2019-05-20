@@ -4,14 +4,14 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
 	id SERIAL PRIMARY KEY,
-	namee VARCHAR(50) UNIQUE,
-	passworde VARCHAR(200),
-	rolee BOOL
-)
+	name VARCHAR(50) UNIQUE,
+	password VARCHAR(200),
+	role NUMERIC(1)
+);
 
 
 -- Insert data
 
 
-INSERT INTO users (namee, passwordd, rolee) VALUES 
+INSERT INTO users (name, password, role) VALUES 
 ('a', 'a', '0');
