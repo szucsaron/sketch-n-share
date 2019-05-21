@@ -13,7 +13,7 @@ public class ImplFolderService extends AbstractService implements FolderService 
     private FolderDao folderDao;
     public ImplFolderService(User user, FolderDao folderDao) {
         super(user);
-        folderDao = folderDao;
+        this.folderDao = folderDao;
     }
 
     public List<Folder> fetchAll() throws ServiceException, SQLException {

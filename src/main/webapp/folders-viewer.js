@@ -14,5 +14,21 @@ function retrieveUserFolders() {
 }
 
 function onFoldersResponse() {
-    console.log(this)
+    const folders = JSON.parse(this.response);
+    const foldersViewerEl = document.getElementById('folders-viewer');
+    removeAllChildren(foldersViewerEl);
+    const foldersTable = createItemList('folders-table', folders, onFolderClicked, onFolderEditClicked, onFolderDeleteClicked);
+    foldersViewerEl.appendChild(foldersTable);
+}
+
+function onFolderClicked() {
+    alert(this.getAttribute('item_id'));
+}
+
+function onFolderEditClicked() {
+    alert('edit')
+}
+
+function onFolderDeleteClicked() {
+    alert('delete')
 }

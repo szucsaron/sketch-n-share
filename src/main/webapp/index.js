@@ -125,4 +125,39 @@ class XhrSender {
     }
 }
 
+function createItemList(id, items, onItemClicked, onItemEditclicked, onItemDeleteClicked) {
+    // items is an array which must contain data objects with id and name fields
+    const tabEl = document.createElement('table');
+    for (let i = 0; i < items.length; i++) {
+        const trEl = document.createElement('tr');
+
+        const itemNameEl = document.createElement('td');
+        itemNameEl.setAttribute('item_id', items[i].id);
+        itemNameEl.textContent = items[i].name;
+        if (onItemClicked != undefined) {
+            itemNameEl.addEventListener('click', onItemClicked);
+        }
+
+        const itemEditEl = document.createElement('td');
+        itemEditEl.setAttribute('item_id', items[i].id);
+        itemEditEl.textContent = "Edit";
+        if (onItemEditclicked != undefined) {
+            itemEditEl.addEventListener('click', onItemEditclicked);
+        }
+        
+        const itemDeleteEl = document.createElement('td');
+        itemDeleteEl.setAttribute('item_id', items[i].id);
+        itemDeleteEl.textContent = "Delete";
+        if (onItemDeleteClicked != undefined) {
+            itemDeleteEl.addEventListener('click', onItemDeleteClicked);
+        }
+
+        trEl.appendChild(itemNameEl);
+        trEl.appendChild(itemEditEl);
+        trEl.appendChild(itemDeleteEl);
+        tabEl.appendChild(trEl);
+    }
+    return tabEl;
+}
+
 document.addEventListener('DOMContentLoaded', onLoad);
