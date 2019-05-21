@@ -42,6 +42,7 @@ public class FolderServlet extends AbstractServlet {
 
             throw new ServiceException("Service not implemented yet");
         } catch (SQLException | ServiceException e) {
+            handleError(resp, e);
         }
     }
 
@@ -53,7 +54,7 @@ public class FolderServlet extends AbstractServlet {
             sendMessage(resp, SC_OK, "test");
             throw new ServiceException("Service not implemented yet");
         } catch (SQLException | ServiceException e) {
-
+            handleError(resp, e);
         }
     }
 
@@ -67,7 +68,7 @@ public class FolderServlet extends AbstractServlet {
 
 
         } catch (SQLException | ServiceException e) {
-
+            handleError(resp, e);
         }
     }
 }
