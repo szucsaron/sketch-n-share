@@ -12,12 +12,15 @@
     <c:url value="/logout.js" var="logoutScriptUrl"/>
     <c:url value="/register.js" var="registerScriptUrl"/>
     <c:url value="/folders-viewer.js" var="foldersViewerUrl"/>
+    <c:url value="/folder-content.js" var="folderContentUrl"/>
 
     <script src="${indexScriptUrl}"></script>
     <script src="${loginScriptUrl}"></script>
     <script src="${logoutScriptUrl}"></script>
     <script src="${registerScriptUrl}"></script>
     <script src="${foldersViewerUrl}"></script>
+    <script src="${folderContentUrl}"></script>
+
 
     <link rel="stylesheet" type="text/css" href="${styleUrl}">
 </head>

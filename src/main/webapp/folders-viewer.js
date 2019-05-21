@@ -1,6 +1,6 @@
 function navigateToFoldersViewer() {
     user = getAuthorization();
-    showContents("folders-viewer")
+    showContents('folders-viewer')
     const xhr = new XhrSender('GET', 'protected/folder', onFoldersResponse);
     xhr.send()
 }
@@ -22,7 +22,8 @@ function onFoldersResponse() {
 }
 
 function onFolderClicked() {
-    alert(this.getAttribute('item_id'));
+    storeFolderId(this.getAttribute('item_id'));
+    navigateToFolderContent();
 }
 
 function onFolderEditClicked() {
