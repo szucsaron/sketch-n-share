@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Schedule Master 2000</title>
+    <title>Sketch n Share</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <c:url value="/style.css" var="styleUrl"/>
     <c:url value="/index.js" var="indexScriptUrl"/>

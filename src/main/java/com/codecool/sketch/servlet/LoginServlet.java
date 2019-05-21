@@ -6,7 +6,7 @@ import com.codecool.sketch.dao.database.DatabaseUserDao;
 import com.codecool.sketch.dao.UserDao;
 import com.codecool.sketch.model.User;
 import com.codecool.sketch.service.exception.ServiceException;
-import com.codecool.sketch.service.simple.SimpleUserService;
+import com.codecool.sketch.service.impl.ImplUserService;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,12 +23,12 @@ public class LoginServlet extends AbstractServlet{
         try (Connection connection = getConnection(req.getServletContext())) {
 
             UserDao userDao = new DatabaseUserDao(connection);
-            SimpleUserService simpleUserService = new SimpleUserService(userDao);
+            ImplUserService implUserService = new ImplUserService(userDao);
 
             String email = req.getParameter("name");
             String password = req.getParameter("password");
 
-            User user = simpleUserService.fetch(email, password);
+            User user = implUserService.fetch(email, password);
             req.getSession().setAttribute("user", user);
 
             sendMessage(resp, HttpServletResponse.SC_OK, user);

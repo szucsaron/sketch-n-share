@@ -12,7 +12,7 @@ public class FolderServlet extends AbstractServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        sendMessage(resp, SC_OK, "faszocskám");
+        sendMessage(resp, SC_OK, "test");
 
     }
 }

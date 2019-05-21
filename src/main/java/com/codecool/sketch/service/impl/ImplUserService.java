@@ -1,4 +1,4 @@
-package com.codecool.sketch.service.simple;
+package com.codecool.sketch.service.impl;
 
 import com.codecool.sketch.dao.UserDao;
 import com.codecool.sketch.model.User;
@@ -10,11 +10,11 @@ import com.codecool.sketch.service.exception.ServiceException;
 //import javafx.concurrent.Service;
 
 
-public final class SimpleUserService implements LoginService {
+public final class ImplUserService implements LoginService {
 
     private final UserDao userDao;
 
-    public SimpleUserService(UserDao userDao) {
+    public ImplUserService(UserDao userDao) {
         this.userDao = userDao;
     }
 
