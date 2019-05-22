@@ -28,7 +28,12 @@
     <link rel="stylesheet" type="text/css" href="${styleUrl}">
 </head>
 <body>
-    <div id="login-content" class="content">
+    <div id="canvas" class="hidden page">
+                This is a canvas
+            <div id="draw-canvas">
+            </div>
+    </div>
+    <div id="login-content" class="page">
         <h1>Login</h1>
         <form id="login-form" onsubmit="return false;">
             <input type="text" name="name" placeholder="Name">
@@ -37,7 +42,7 @@
             <button id="register-button">Register</button>
         </form>
     </div>
-    <div id="register-content" class="hidden content">
+    <div id="register-content" class="hidden page">
         <h1>Register</h1>
         <form id="register-form" onsubmit="return false;">
             <input type="text" name="email" placeholder="Email">
@@ -51,15 +56,13 @@
             <button id="registration-button">Register</button>
         </form>
     </div>
-    <div id="folders-viewer" class="hidden content">
+    <div id="folders-viewer" class="hidden page">
         These are folders
     </div>
-    <div id="folder-content" class="hidden content">
+    <div id="folder-content" class="hidden page">
             This is a folder
     </div>
-    <div id="canvas" class="hidden content">
-            This is a canvas
-    </div>
+    
     <div id="navbar" >
         <button id="logout-button">Logout</button>
     </div>

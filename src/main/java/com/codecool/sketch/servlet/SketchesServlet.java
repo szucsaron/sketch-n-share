@@ -3,7 +3,6 @@ package com.codecool.sketch.servlet;
 import com.codecool.sketch.dao.SketchDao;
 import com.codecool.sketch.dao.database.DatabaseSketchDao;
 import com.codecool.sketch.model.EmptySketchData;
-import com.codecool.sketch.model.Sketch;
 import com.codecool.sketch.service.SketchService;
 import com.codecool.sketch.service.exception.ServiceException;
 import com.codecool.sketch.service.impl.ImplSketchService;
@@ -18,18 +17,18 @@ import java.util.List;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
-@WebServlet("/protected/sketch")
-public class SketchServlet extends AbstractServlet{
+@WebServlet("/protected/sketches")
+public class SketchesServlet extends AbstractServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         // List all sketches in a folder
         try (Connection connection = getConnection(getServletContext())) {
-            String sketchId = req.getParameter("sketch_id");
+            String folderId = req.getParameter("folder_id");
             SketchDao sketchDao = new DatabaseSketchDao(connection);
             SketchService sketchService = new ImplSketchService(fetchUser(req), sketchDao);
-            Sketch sketch = sketchService.fetchSketchById(sketchId);
-            sendMessage(resp, SC_OK, sketch);
+            List<EmptySketchData> emptySketchData = sketchService.fetchEmptiesByFolderId(folderId);
+            sendMessage(resp, SC_OK, emptySketchData);
         } catch (SQLException | ServiceException e) {
             handleError(resp, e);
         }

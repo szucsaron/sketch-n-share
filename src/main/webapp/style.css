@@ -10,6 +10,11 @@
     display: none;
 }
 
+.page {
+    width: 100%;
+    height: auto;
+}
+
 /*body {
     background-size: cover;
     background-repeat: no-repeat;
@@ -58,4 +63,21 @@ img {
 
 #task-title {
     width: 254px;
+}
+
+.draw_object {
+    color:red;
+}
+
+.line {
+    background:black;
+    height:1px;
+    transform-origin: 0 100%
+}
+
+#canvas {
+    width: 100%;
+    height: 3000px;
+    background-color:white;
+    color: #000;
 }

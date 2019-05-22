@@ -2,6 +2,7 @@ package com.codecool.sketch.service.impl;
 
 import com.codecool.sketch.dao.SketchDao;
 import com.codecool.sketch.model.EmptySketchData;
+import com.codecool.sketch.model.Sketch;
 import com.codecool.sketch.model.User;
 import com.codecool.sketch.service.SketchService;
 import com.codecool.sketch.service.exception.ServiceException;
@@ -22,6 +23,14 @@ public class ImplSketchService extends AbstractService implements SketchService 
           return null;
         } else {
             return sketchDao.findByFolderId(fetchUserId(), fetchInt(folderId, "folderId"));
+        }
+    }
+
+    public Sketch fetchSketchById(String id) throws ServiceException, SQLException {
+        if (adminMode) {
+            return null;
+        } else {
+            return sketchDao.findById(fetchUserId(), fetchInt(id, "folderId"));
         }
     }
 }

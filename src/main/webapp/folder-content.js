@@ -1,7 +1,7 @@
 function navigateToFolderContent() {
     user = getAuthorization();
     showContents('folder-content');
-    const xhr = new XhrSender('GET', 'protected/sketch', onFolderResponse);
+    const xhr = new XhrSender('GET', 'protected/sketches', onFolderResponse);
     xhr.addParam('folder_id', retrieveFolderId());
     xhr.send();
 }

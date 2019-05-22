@@ -13,4 +13,6 @@ public interface SketchService {
 
     List<EmptySketchData> fetchEmptiesByFolderId(String id) throws ServiceException, SQLException;
 
+    Sketch fetchSketchById(String id) throws ServiceException, SQLException;
+
 }

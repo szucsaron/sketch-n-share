@@ -42,7 +42,7 @@ function clearMessages() {
 }
 
 function showContents(ids) {
-    const contentEls = document.getElementsByClassName('content');
+    const contentEls = document.getElementsByClassName('page');
     for (let i = 0; i < contentEls.length; i++) {
         const contentEl = contentEls[i];
         if (ids.includes(contentEl.id)) {
@@ -98,6 +98,9 @@ function onLoad() {
 
     const logoutButtonEl = document.getElementById('logout-button');
     logoutButtonEl.addEventListener('click', onLogoutButtonClicked);
+
+    document.getElementById("canvas").addEventListener("click", onCanvasClick);
+    
 
     if (hasAuthorization()) {
         onProfileLoad(getAuthorization());
