@@ -120,8 +120,8 @@ class XhrSender {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', this.onResponse);
         xhr.addEventListener('error', onNetworkError);
-        xhr.open(this.method, this.url);
-        xhr.send(this.params);
+        xhr.open(this.method, this.url + "?" + this.params.toString());
+        xhr.send();
     }
 }
 

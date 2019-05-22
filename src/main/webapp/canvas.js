@@ -4,10 +4,10 @@ function navigateToCanvas() {
     console.log(user)
 }
 
-function storeSketch(sketch) {
+function storeSketchId(sketch) {
     storeItem('sketch', sketch);
 }
 
-function retrieveSketch() {
+function retrieveSketchId() {
     return retrieveItem('sketch');
 }

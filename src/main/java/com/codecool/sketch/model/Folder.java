@@ -1,7 +1,7 @@
 package com.codecool.sketch.model;
 
 
-public class Folder {
+public class Folder implements Item{
     private int id;
     private String name;
     private int owner;
