@@ -20,7 +20,8 @@ public class DatabaseSketchDao extends DatabaseAbstractDao implements SketchDao 
     public List<EmptySketchData> findByFolderId(int userId, int folderId) throws SQLException {
         String sql = "SELECT sketches.name, sketches.id, sketches.folders_id FROM sketches \n" +
                 "LEFT JOIN folders ON folders_id = folders.id \n" +
-                "WHERE owner = ? AND folders_id = ?";
+                "WHERE owner = ? AND folders_id = ?" +
+                "ORDER BY sketches.name";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, folderId);
@@ -31,7 +32,8 @@ public class DatabaseSketchDao extends DatabaseAbstractDao implements SketchDao 
     public Sketch findById(int userId, int id) throws SQLException {
         String sql = "SELECT sketches.* FROM sketches \n" +
                 "LEFT JOIN folders ON folders_id = folders.id \n" +
-                "WHERE owner = ? AND sketches.id = ?";
+                "WHERE owner = ? AND sketches.id = ?" +
+                "ORDER BY sketches.name";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, id);

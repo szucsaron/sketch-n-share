@@ -98,8 +98,6 @@ function onCanvasClick() {
     if (true) { // should decide according to drawing mode
         handleLineDrawing();
     }
-
-    
  }
 
 function onCanvasSaveClick() {
@@ -125,14 +123,6 @@ function onCanvasSaveResponse() {
 }
 
 // Data handling
-
-function preventCanvasClick() {
-    storeItem('onCanvasClickPrevent', true);
-}
-
-function isCanvasClickValid() {
-    retrieveItem('onCanvasClickPrevent');
-}
 
 function storeSketchHeader(id, name, folderId) {
     let header = {}
