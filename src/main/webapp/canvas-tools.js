@@ -13,6 +13,10 @@ class Canvas {
         canvasContainerEl.addEventListener('click', boundOnClick);
     }
 
+    loadDrawObjects(drawObjects) {
+        this.drawObjects = drawObjects;
+    }
+
     refresh() {
         this.canvasEl.innerHTML = "";
         for (let i = 0; i < this.drawObjects.length; i++) {
@@ -112,9 +116,13 @@ function convertDrawObjectsToDto(drawObjects) {
 
 function convertDtoToDrawObjects(dto) {
     let drObjs = [];
+    let idCount = 0;
     for (let i = 0; i < dto.lines.length; i++) {
         const line = dto.lines[i];
-        drObjs.push(new LineShape(line[0], line[1], line[2]));
+        let lineObj = new LineShape(line[0], line[1], line[2]);
+        lineObj.id = idCount;
+        drObjs.push(lineObj);
+        idCount ++;
     }
     return drObjs;
 }
