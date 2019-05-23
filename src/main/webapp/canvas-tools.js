@@ -97,3 +97,24 @@ class LineShape {
         return el;
     }
 }
+
+function convertDrawObjectsToDto(drawObjects) {
+    let dto = {}
+    dto.lines = []
+    for (let i = 0; i < drawObjects.length; i++) {
+        const obj = drawObjects[i]
+        if (obj.type = 'line') {
+            dto.lines.push([obj.pos1, obj.pos2, obj.color])
+        }
+    }
+    return dto;
+}
+
+function convertDtoToDrawObjects(dto) {
+    let drObjs = [];
+    for (let i = 0; i < dto.lines.length; i++) {
+        const line = dto.lines[i];
+        drObjs.push(new LineShape(line[0], line[1], line[2]));
+    }
+    return drObjs;
+}

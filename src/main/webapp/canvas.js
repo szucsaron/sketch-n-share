@@ -43,7 +43,12 @@ function onCanvasResponse() {
         const obj = shapeCreator.createDrawObjectFromData(content[i]);
         gCanvas.addDrawObject(obj);
     }
-
+    const dto = JSON.stringify( convertDrawObjectsToDto(gCanvas.drawObjects));
+    gCanvas.drawObjects = null;
+    console.log(dto);
+    const drObjs = (convertDtoToDrawObjects(JSON.parse(dto)));
+    console.log(drObjs);
+    gCanvas.drawObjects = drObjs;
     gCanvas.refresh()
 }
 

@@ -42,7 +42,7 @@ INSERT INTO users (name, password, role) VALUES
 
 
 INSERT INTO folders (name, owner) VALUES
-('Work"', 1), --1
+('Work', 1), --1
 ('Unfinished Projects', 1), --2
 ('My Sketches', 2) --2
 ;
