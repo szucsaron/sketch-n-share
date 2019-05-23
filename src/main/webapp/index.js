@@ -100,6 +100,8 @@ function onLoad() {
     logoutButtonEl.addEventListener('click', onLogoutButtonClicked);
 
     document.getElementById("canvas").addEventListener("click", onCanvasClick);
+
+    document.getElementById('canvas-save').addEventListener('click', onCanvasSaveClick);
     
 
     if (hasAuthorization()) {
@@ -123,8 +125,14 @@ class XhrSender {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', this.onResponse);
         xhr.addEventListener('error', onNetworkError);
-        xhr.open(this.method, this.url + "?" + this.params.toString());
-        xhr.send();
+        
+        if (this.method == 'afadfa') {
+            xhr.open(this.method, this.url);
+            xhr.send(this.params);
+        } else {
+            xhr.open(this.method, this.url + "?" + this.params.toString());
+            xhr.send();
+        }
     }
 }
 

@@ -9,9 +9,9 @@ import com.codecool.sketch.service.exception.ServiceException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ImplFolderService extends AbstractService implements FolderService {
+public class ImplFolderServiceImpl extends ImplAbstractService implements FolderService {
     private FolderDao folderDao;
-    public ImplFolderService(User user, FolderDao folderDao) {
+    public ImplFolderServiceImpl(User user, FolderDao folderDao) {
         super(user);
         this.folderDao = folderDao;
     }

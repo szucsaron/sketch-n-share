@@ -2,7 +2,9 @@ package com.codecool.sketch.servlet;
 
 import com.codecool.sketch.dto.MessageDto;
 import com.codecool.sketch.model.User;
+import com.codecool.sketch.service.SketchService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
@@ -29,6 +31,7 @@ abstract class AbstractServlet extends HttpServlet {
     protected void sendMessage(HttpServletResponse resp, int status, Object object) throws IOException {
         resp.setStatus(status);
         om.writeValue(resp.getOutputStream(), object);
+
     }
 
     protected void handleError(HttpServletResponse resp, Exception ex) throws IOException {
@@ -39,5 +42,10 @@ abstract class AbstractServlet extends HttpServlet {
     protected User fetchUser(HttpServletRequest req) {
         User loggedInUser = (User) req.getSession().getAttribute("user");
         return loggedInUser;
+    }
+
+    protected void validateAdminMode(HttpServletRequest req, SketchService sketchService) {
+        String adminMode = req.getParameter("admin_mode");
+        sketchService.validateAdminMode(adminMode);
     }
 }

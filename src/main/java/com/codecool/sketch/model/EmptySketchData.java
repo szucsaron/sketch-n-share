@@ -3,10 +3,11 @@ package com.codecool.sketch.model;
 public class EmptySketchData implements Item{
     protected int id;
     protected String name;
-    protected int foldersId;
+    protected int folderId;
 
-    public EmptySketchData(int id, int foldersId, String name) {
+    public EmptySketchData(int id, int folderId, String name) {
         this.id = id;
+        this.folderId = folderId;
         this.name = name;
     }
 
@@ -16,5 +17,9 @@ public class EmptySketchData implements Item{
 
     public String getName() {
         return name;
+    }
+
+    public int getFolderId() {
+        return folderId;
     }
 }

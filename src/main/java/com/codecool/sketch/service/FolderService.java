@@ -6,6 +6,6 @@ import com.codecool.sketch.service.exception.ServiceException;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface FolderService {
+public interface FolderService extends AbstracttService{
     List<Folder> fetchAll() throws ServiceException, SQLException;
 }

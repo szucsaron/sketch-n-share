@@ -20,13 +20,26 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, userId);
             preparedStatement.execute();
-            ResultSet rs = preparedStatement.getResultSet();
-            List<Folder> folders = new ArrayList<>();
-            while (rs.next()) {
-                folders.add(fetchFolder(rs));
-            }
-            return folders;
+            return executeMultipleFetch(preparedStatement);
         }
+    }
+
+    public List<Folder> fetchAll() throws SQLException {
+        String sql = "SELECT * FROM folders";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.execute();
+            return executeMultipleFetch(preparedStatement);
+        }
+    }
+
+    private List<Folder> executeMultipleFetch(PreparedStatement preparedStatement) throws SQLException{
+        preparedStatement.execute();
+        ResultSet rs = preparedStatement.getResultSet();
+        List<Folder> folders = new ArrayList<>();
+        while (rs.next()) {
+            folders.add(fetchFolder(rs));
+        }
+        return folders;
     }
 
     private Folder fetchFolder(ResultSet rs) throws SQLException {

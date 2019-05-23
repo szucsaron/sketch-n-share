@@ -32,6 +32,7 @@
                 This is a canvas
             <div id="draw-canvas">
             </div>
+            <button id="canvas-save">Save</button>
     </div>
     <div id="login-content" class="page">
         <h1>Login</h1>

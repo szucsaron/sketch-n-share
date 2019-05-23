@@ -76,6 +76,8 @@ img {
 }
 
 #canvas {
+    position: absolute;
+    left: 100px;
     width: 100%;
     height: 3000px;
     background-color:white;

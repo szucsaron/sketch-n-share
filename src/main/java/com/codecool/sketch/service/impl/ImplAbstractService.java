@@ -6,11 +6,11 @@ import com.codecool.sketch.service.exception.ServiceException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class AbstractService {
+public class ImplAbstractService {
     private User user;
     protected boolean adminMode;
 
-    public AbstractService(User user) {
+    public ImplAbstractService(User user) {
         this.user = user;
     }
 

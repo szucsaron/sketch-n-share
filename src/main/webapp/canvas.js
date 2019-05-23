@@ -9,7 +9,7 @@ function navigateToCanvas() {
     user = getAuthorization();
     showContents("canvas")
     const xhr = new XhrSender('GET', 'protected/sketch', onCanvasResponse);
-    xhr.addParam('sketch_id', retrieveFolderId());
+    xhr.addParam('sketch_id', retrieveSketchId());
     xhr.send();
 }
 
@@ -24,6 +24,7 @@ function retrieveSketchId() {
 function onCanvasResponse() {
     const data = JSON.parse(this.responseText);
     const content = JSON.parse(data.content);
+    storeSketchHeader(data.id, data.name, data.folderId);
     for (let i = 0; i < content.length; i++) {
         const obj = createDrawObjectFromData(content[i]);
         addDrawObject(obj);
@@ -32,20 +33,20 @@ function onCanvasResponse() {
 
 }
 
-function onCanvasClick() {
-    if (true) { // should decide according to drawing mode
-        lineDrawMode();
-    }
+
+
+ function drawObject(obj) {
+    addDrawObject(obj);
+    drawObjectToScreen(obj);
  }
  
- function lineDrawMode() {
+ function handleLineDrawing() {
      const x = event.clientX;
      const y = event.clientY;
      if (gLineStarted) {
          let line = createLine([gX1, gY1], [x, y], "black");
-         addDrawObject(line);
-         drawObjectToScreen(line);
          gLineStarted = false;
+         drawObject(line);
      } else {
          gX1 = x;
          gY1 = y;
@@ -90,6 +91,61 @@ function onCanvasClick() {
      return el;
  }
  
+// Mouse click handling and buttons
+
+
+function onCanvasClick() {
+    if (true) { // should decide according to drawing mode
+        handleLineDrawing();
+    }
+
+    
+ }
+
+function onCanvasSaveClick() {
+    const header = retrieveSketchHeader()
+    const drawObjectsJson = JSON.stringify(retrieveDrawObjects())
+    console.log(drawObjectsJson);
+    params = new URLSearchParams();
+    params.append('sketch_id', retrieveSketchId());
+    params.append('folder_id', header.folderId);
+    params.append('name', header.name);
+    params.append('content', drawObjectsJson);
+
+    const xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', onCanvasSaveResponse);
+        xhr.addEventListener('error', onNetworkError);
+        xhr.open('POST', 'protected/sketch');
+        xhr.send(params);
+}
+
+function onCanvasSaveResponse() {
+    const data = JSON.parse(this.responseText);
+    alert(data.message);
+}
+
+// Data handling
+
+function preventCanvasClick() {
+    storeItem('onCanvasClickPrevent', true);
+}
+
+function isCanvasClickValid() {
+    retrieveItem('onCanvasClickPrevent');
+}
+
+function storeSketchHeader(id, name, folderId) {
+    let header = {}
+    header.id = id;
+    header.name = name;
+    header.folderId = folderId;
+    storeItem('sketchHeader', header);
+}
+
+function retrieveSketchHeader() {
+    return retrieveItem('sketchHeader');
+}
+
  function createDrawObjectFromData(obj) {
      if (obj.type == 'line') {
          return createLineFromData(obj);
@@ -101,6 +157,10 @@ function onCanvasClick() {
      gDrawObjects.push(obj);
      gMaxDrawObjectId++;
  }
+
+ function retrieveDrawObjects() {
+    return gDrawObjects;
+ }
  
  function getNextDrawObjectId() {
      return gMaxDrawObjectId;
@@ -111,7 +171,6 @@ function onCanvasClick() {
      drawEl.innerHTML = "";
      for (let i = 0; i < gDrawObjects.length; i++) {
          drawEl.appendChild(gDrawObjects[i].getElement());
-         console.log(gDrawObjects[i].getElement());
      }
  }
  

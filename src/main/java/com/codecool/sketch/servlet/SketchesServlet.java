@@ -5,7 +5,7 @@ import com.codecool.sketch.dao.database.DatabaseSketchDao;
 import com.codecool.sketch.model.EmptySketchData;
 import com.codecool.sketch.service.SketchService;
 import com.codecool.sketch.service.exception.ServiceException;
-import com.codecool.sketch.service.impl.ImplSketchService;
+import com.codecool.sketch.service.impl.ImplSketchServiceImpl;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +26,7 @@ public class SketchesServlet extends AbstractServlet {
         try (Connection connection = getConnection(getServletContext())) {
             String folderId = req.getParameter("folder_id");
             SketchDao sketchDao = new DatabaseSketchDao(connection);
-            SketchService sketchService = new ImplSketchService(fetchUser(req), sketchDao);
+            SketchService sketchService = new ImplSketchServiceImpl(fetchUser(req), sketchDao);
             List<EmptySketchData> emptySketchData = sketchService.fetchEmptiesByFolderId(folderId);
             sendMessage(resp, SC_OK, emptySketchData);
         } catch (SQLException | ServiceException e) {
