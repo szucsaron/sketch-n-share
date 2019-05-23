@@ -78,7 +78,7 @@ class ShapeCreator {
     }
 
     createDrawObjectFromData(obj) {
-        if (obj.type == 'line') {
+        if (obj.type == 'line') { // should branch to other types later
             return this.__createLineFromData(obj);
         }
     }
