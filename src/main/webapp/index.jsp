@@ -13,6 +13,7 @@
     <c:url value="/register.js" var="registerScriptUrl"/>
     <c:url value="/folders-viewer.js" var="foldersViewerUrl"/>
     <c:url value="/folder-content.js" var="folderContentUrl"/>
+    <c:url value="/canvas-tools.js" var="canvasToolsUrl"/>
     <c:url value="/canvas.js" var="canvasUrl"/>
 
     <script src="${indexScriptUrl}"></script>
@@ -21,6 +22,8 @@
     <script src="${registerScriptUrl}"></script>
     <script src="${foldersViewerUrl}"></script>
     <script src="${folderContentUrl}"></script>
+    <script src="${canvasToolsUrl}"></script>
+
     <script src="${canvasUrl}"></script>
 
 

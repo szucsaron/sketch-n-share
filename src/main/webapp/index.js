@@ -99,8 +99,6 @@ function onLoad() {
     const logoutButtonEl = document.getElementById('logout-button');
     logoutButtonEl.addEventListener('click', onLogoutButtonClicked);
 
-    document.getElementById("canvas").addEventListener("click", onCanvasClick);
-
     document.getElementById('canvas-save').addEventListener('click', onCanvasSaveClick);
     
 
