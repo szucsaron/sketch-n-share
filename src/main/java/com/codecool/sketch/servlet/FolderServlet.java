@@ -48,7 +48,7 @@ public class FolderServlet extends AbstractServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        // Rename folder
+        // Edit folder
         try (Connection connection = getConnection(getServletContext())) {
             String name = req.getParameter("name");
             sendMessage(resp, SC_OK, "test");

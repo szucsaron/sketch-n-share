@@ -17,7 +17,8 @@ function onFoldersResponse() {
     const folders = JSON.parse(this.response);
     const foldersViewerEl = document.getElementById('folders-page');
     removeAllChildren(foldersViewerEl);
-    const foldersTable = createItemList('folders-table', folders, onFolderClicked, onFolderEditClicked, onFolderDeleteClicked);
+    const itemList = new ItemList('folders-table', folders, onFolderClicked, onFolderEditDone, onFolderDeleteClicked);
+    const foldersTable = itemList.create();
     foldersViewerEl.appendChild(foldersTable);
 }
 
@@ -26,10 +27,12 @@ function onFolderClicked() {
     navigateToFolderContent();
 }
 
-function onFolderEditClicked() {
-    alert('edit')
+function onFolderEditDone(res) {
+    console.log(res);
+    res.itemList.refresh();
 }
 
-function onFolderDeleteClicked() {
-    alert('delete')
+function onFolderDeleteClicked(res) {
+    console.log(res)
+    res.itemList.refresh();
 }

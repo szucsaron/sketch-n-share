@@ -14,6 +14,7 @@ let schedulesContentDivEl;
 let backToProfileContentDivEl;
 let logoutContentDivEl;
 
+
 function newInfo(targetEl, message) {
     newMessage(targetEl, 'info', message);
 }
