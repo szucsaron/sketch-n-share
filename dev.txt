@@ -1,0 +1,45 @@
+links:
+/login
+	POST: login a user:
+		params: name, password
+		return: MessageDto
+
+/protected/folder
+	GET: get all folders of a user
+		params: -
+		return: List<Folder>
+	POST: Create new folder
+		params: name
+		return: MessageDto
+	PUT: Rename folder
+		params: id, name
+		return: MessageDto
+	DELETE: Delete folder
+		params: id
+		return: MessageDto
+		
+/protected/sketches
+	GET: get all sketches in a folder as empty data containers
+		 (without content)
+		params: folder_id
+		return: List<EmptySketchData>
+	POST: create an empty sketch
+		params: folder_id, id, name
+		return: MessageDto
+	PUT: modify sketch header
+		params: name
+		return: MessageDto
+	PATCH: move sketch to different folder
+		params: id, folder_id
+		return MessageDto
+	DELETE: delete sketch
+		params: id
+		return: MessageDto
+		
+/protected/sketch
+	GET: get a sketch:
+		params: sketch_id
+		return: Sketch
+	POST: modify sketch
+		params: sketch_id, folder_id, name, content
+		return: MessageDto

@@ -17,7 +17,7 @@ function onFoldersResponse() {
     const folders = JSON.parse(this.response);
     const foldersViewerEl = document.getElementById('folders-page');
     removeAllChildren(foldersViewerEl);
-    const itemList = new ItemList('folders-table', folders, onFolderClicked, onFolderEditDone, onFolderDeleteClicked);
+    const itemList = new ItemList('folders-table', folders, onFolderClicked, onFolderEditDone, onFolderDeleteClicked, onNewFolderCreated);
     const foldersTable = itemList.create();
     foldersViewerEl.appendChild(foldersTable);
 }
@@ -35,4 +35,9 @@ function onFolderEditDone(res) {
 function onFolderDeleteClicked(res) {
     console.log(res)
     res.itemList.refresh();
+}
+
+function onNewFolderCreated(res) {
+    alert('new');
+    console.log(res)
 }
