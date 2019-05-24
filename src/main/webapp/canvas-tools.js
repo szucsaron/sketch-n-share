@@ -10,7 +10,7 @@ class Canvas {
         this.__onCanvasClick.bind(this);
        
         const boundOnClick = this.__onCanvasClick.bind(this);
-        canvasContainerEl.addEventListener('click', boundOnClick);
+        canvasEl.addEventListener('click', boundOnClick);
     }
 
     loadDrawObjects(drawObjects) {

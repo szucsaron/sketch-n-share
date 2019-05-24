@@ -8,15 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <c:url value="/style.css" var="styleUrl"/>
     <c:url value="/index.js" var="indexScriptUrl"/>
-    <c:url value="/login.js" var="loginScriptUrl"/>
+    <c:url value="/item-list.js" var="itemListUrl"/>
+    <c:url value="/login-page.js" var="loginScriptUrl"/>
     <c:url value="/logout.js" var="logoutScriptUrl"/>
-    <c:url value="/register.js" var="registerScriptUrl"/>
-    <c:url value="/folders-viewer.js" var="foldersViewerUrl"/>
-    <c:url value="/folder-content.js" var="folderContentUrl"/>
+    <c:url value="/register-page.js" var="registerScriptUrl"/>
+    <c:url value="/folders-page.js" var="foldersViewerUrl"/>
+    <c:url value="/folder-page.js" var="folderContentUrl"/>
     <c:url value="/canvas-tools.js" var="canvasToolsUrl"/>
-    <c:url value="/canvas.js" var="canvasUrl"/>
+    <c:url value="/canvas-page.js" var="canvasUrl"/>
 
     <script src="${indexScriptUrl}"></script>
+    <script src="${itemListUrl}"></script>
     <script src="${loginScriptUrl}"></script>
     <script src="${logoutScriptUrl}"></script>
     <script src="${registerScriptUrl}"></script>
@@ -31,13 +33,15 @@
     <link rel="stylesheet" type="text/css" href="${styleUrl}">
 </head>
 <body>
-    <div id="canvas" class="hidden page">
-                This is a canvas
-            <div id="draw-canvas">
-            </div>
+    <div id="canvas-page" class="hidden page">
+        <div id="canvas-toolbar">
             <button id="canvas-save">Save</button>
+            <button id="canvas-back">Back</button>
+        </div>
+        <div id="canvas">
+        </div>
     </div>
-    <div id="login-content" class="page">
+    <div id="login-page" class="page">
         <h1>Login</h1>
         <form id="login-form" onsubmit="return false;">
             <input type="text" name="name" placeholder="Name">
@@ -46,7 +50,7 @@
             <button id="register-button">Register</button>
         </form>
     </div>
-    <div id="register-content" class="hidden page">
+    <div id="register-page" class="hidden page">
         <h1>Register</h1>
         <form id="register-form" onsubmit="return false;">
             <input type="text" name="email" placeholder="Email">
@@ -60,10 +64,10 @@
             <button id="registration-button">Register</button>
         </form>
     </div>
-    <div id="folders-viewer" class="hidden page">
+    <div id="folders-page" class="hidden page">
         These are folders
     </div>
-    <div id="folder-content" class="hidden page">
+    <div id="folder-page" class="hidden page">
             This is a folder
     </div>
     

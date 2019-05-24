@@ -99,6 +99,9 @@ function onLoad() {
     const logoutButtonEl = document.getElementById('logout-button');
     logoutButtonEl.addEventListener('click', onLogoutButtonClicked);
 
+    const canvasBackButton = document.getElementById('canvas-back');
+    canvasBackButton.addEventListener('click', onCanvasBackButtonClicked);
+
     document.getElementById('canvas-save').addEventListener('click', onCanvasSaveClick);
     
 
@@ -168,5 +171,7 @@ function createItemList(id, items, onItemClicked, onItemEditclicked, onItemDelet
     }
     return tabEl;
 }
+
+
 
 document.addEventListener('DOMContentLoaded', onLoad);
