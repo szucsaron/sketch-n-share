@@ -40,4 +40,26 @@ public class FolderShareServlet extends AbstractServlet{
             handleError(resp, ex);
         }
     }
+
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        try (Connection connection = getConnection(req.getServletContext())) {
+
+            UserDao userDao = new DatabaseUserDao(connection);
+            UserService userService = new ImplUserService(fetchUser(req), userDao);
+
+            String folderId = req.getParameter("folder_id");
+            String userName = req.getParameter("user_name");
+            userService.shareFolderWithUser(userName, folderId);
+
+            sendMessage(resp, HttpServletResponse.SC_OK, "Folder shared");
+
+
+        } catch (ServiceException ex) {
+            sendMessage(resp, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+        } catch (SQLException ex) {
+            handleError(resp, ex);
+        }
+    }
+
+
 }

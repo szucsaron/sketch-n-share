@@ -9,22 +9,29 @@ function onSharedFoldersResponse() {
     gFolderShareItemList = new ItemList('folder-share-item-list', onShareClicked);
     gFolderShareItemList.setAsCreatable(onFolderShareCreateRequested)
     gFolderShareItemList.setAsDeletable(onFolderShareDeleteRequested);
-    const fasz = []
-    fasz[0] = {id: 0, name: 'fasz'};
-    fasz[1] = {id: 1, name: 'pöcs'};
     gFolderShareItemList.refreshWithNew(JSON.parse(this.responseText));
-
-    document.getElementById('folder-share-page').appendChild(gFolderShareItemList.create());
+    const sharedEl = document.getElementById('folder-share-page');
+    removeAllChildren(sharedEl);
+    sharedEl.appendChild(gFolderShareItemList.create());
 }
 
 function onShareClicked() {
 
 }
 
-function onFolderShareCreateRequested(res) {
-    alert('create share');
-    console.log(res)
+function onFolderShareUpdateResponse() {
+    handleMessage(this.responseText);
+    navigateToFolderSharedPage();
 }
+
+function onFolderShareCreateRequested(res) {
+    console.log(res)
+    const xhr = new XhrSender('POST', 'protected/folder_share', onFolderShareUpdateResponse)
+    xhr.addParam('folder_id', retrieveFolderId());
+    xhr.addParam('user_name', res.name);
+    xhr.send();
+}
+
 
 function onFolderShareDeleteRequested(res) {
     alert('delete share');

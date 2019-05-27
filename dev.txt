@@ -1,7 +1,7 @@
 optional params for all methods: admin_mode
 
 /login
-	POST: login a user:
+	x POST: login a user:
 		params: userName, password
 		return: MessageDto
 
@@ -15,16 +15,16 @@ optional params for all methods: admin_mode
 	x PUT: Rename folder
 		params: folder_id, userName
 		return: MessageDto
-	DELETE: Delete folder
+	x DELETE: Delete folder
 		params: folder_d
 		return: MessageDto
 
 /protected/folder_share
-    GET: get all shared users of a folder
+    x GET: get all shared users of a folder
         params: folder_id
         return: List<User>
-    POST: share folder with user
-        params: folder_id, user_id
+    x POST: share folder with user
+        params: folder_id, user_name
         return: MessageDto
     DELETE: remove user share from a folder
         params: folder_id, user_id
@@ -36,7 +36,7 @@ optional params for all methods: admin_mode
         return: List<Folder>
 		
 /protected/sketches
-	GET: get all sketches in a folder as empty data containers
+	x GET: get all sketches in a folder as empty data containers
 		 (without content)
 		params: folder_id
 		return: List<EmptySketchData>
@@ -54,7 +54,7 @@ optional params for all methods: admin_mode
 		return: MessageDto
 		
 /protected/sketch
-	GET: get a sketch:
+	x GET: get a sketch:
 		params: sketch_id
 		return: Sketch
 	POST: modify sketch

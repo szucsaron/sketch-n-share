@@ -75,7 +75,15 @@ class ItemList {
         const itemEditEl = document.createElement('td');
         itemEditEl.setAttribute('item_id', item.id);
         itemEditEl.setAttribute('mode', 'edit');
-        itemEditEl.textContent = "Edit";
+        itemEditEl.textContent = "Edit";el.setAttribute('mode', 'save');
+        if (el.getAttribute('item_id') == 'new') {
+            el.textContent = 'Create';
+        } else {
+            el.textContent = 'Save';
+        }
+
+        const nameEl = el.parentElement.childNodes[0];
+        nameEl.removeEventListener('click', this._onItemClickedCallback);
         itemEditEl.addEventListener('click', this._onEditClicked.bind(this));
         return itemEditEl;
     }
@@ -117,38 +125,35 @@ class ItemList {
     _onEditClicked(res) {
         const el = this._get_target(res);
         const mode = el.getAttribute('mode');
-        if (mode == 'edit') {
-            this._transformFieldToEditable(el);
-        } else if (mode == 'save') {
-            this._saveItem(el);
-        }
+        this._transformRowToEditable(el.parentElement);
     }
 
-    _transformFieldToEditable(el) {
-        el.setAttribute('mode', 'save');
-        if (el.getAttribute('item_id') == 'new') {
-            el.textContent = 'Create';
-        } else {
-            el.textContent = 'Save';
-        }
-
-        const nameEl = el.parentElement.childNodes[0];
-        nameEl.removeEventListener('click', this._onItemClickedCallback);
+    _transformRowToEditable(rowEl) {
+        const el = rowEl.childNodes[0];
+        el.removeEventListener('click', this._onItemClickedCallback);
+        const itemId = el.getAttribute('item_id');
 
         const inputEl = document.createElement('input');
-        inputEl.value = nameEl.textContent;
-        inputEl.setAttribute('item_id', el.getAttribute('item_id'));
+        inputEl.value = el.textContent;
+        inputEl.setAttribute('item_id', itemId);
 
-        nameEl.textContent = '';
-        nameEl.appendChild(inputEl);
+        el.textContent = '';
+        el.appendChild(inputEl);
+
+        const createButtonEl = document.createElement('button');
+        createButtonEl.setAttribute('item_id', itemId);
+        createButtonEl.textContent = 'Save';
+        createButtonEl.addEventListener('click', this._saveItem.bind(this));
+        el.appendChild(createButtonEl);
 
         //nameEl.appendChild(inputEl);
     }
 
-    _saveItem(el) {
-        const tdEl = el.parentElement.childNodes[0]
+    _saveItem(res) {
+        const buttonEl = this._get_target(res);
+        const tdEl = buttonEl.parentElement;
         const nameEl = tdEl.childNodes[0];
-        const newName = nameEl.value;
+        console.log(nameEl);
 
         let result = {};
         const id = tdEl.getAttribute('item_id');
@@ -175,6 +180,7 @@ class ItemList {
         item.id = 'new';
         item.name = 'New';
         const rowEl = this._generateRow(item);
+        this._transformRowToEditable(rowEl);
         this.tableEl.appendChild(rowEl);
     }
 }
