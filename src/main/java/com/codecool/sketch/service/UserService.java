@@ -5,9 +5,14 @@ import com.codecool.sketch.model.User;
 import com.codecool.sketch.service.exception.ServiceException;
 
 import java.sql.SQLException;
+import java.util.List;
 
-public interface UserService  extends AbstracttService{
+public interface UserService  extends AbstractService {
 
-    User addUser(String name, String password, String email, String role) throws SQLException, ServiceException;
+
+
+    void addUser(String name, String password, String email, String role) throws SQLException, ServiceException;
+
+    List<User> fetchBySharedFolder(String folderId) throws SQLException, ServiceException;
 
 }

@@ -4,6 +4,7 @@ import com.codecool.sketch.dao.FolderDao;
 import com.codecool.sketch.dao.database.DatabaseFolderDao;
 import com.codecool.sketch.model.Folder;
 import com.codecool.sketch.service.FolderService;
+import com.codecool.sketch.service.UserService;
 import com.codecool.sketch.service.exception.ServiceException;
 import com.codecool.sketch.service.impl.ImplFolderServiceImpl;
 
@@ -38,9 +39,12 @@ public class FolderServlet extends AbstractServlet {
         // Create new folder
         try (Connection connection = getConnection(getServletContext())) {
             String name = req.getParameter("name");
-            sendMessage(resp, SC_OK, "test");
+            FolderDao folderDao = new DatabaseFolderDao(connection);
+            FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
+            folderService.validateAdminMode(fetchAdminMode(req));
+            folderService.createNew(name);
+            sendMessage(resp, SC_OK, "New folder created");
 
-            throw new ServiceException("Service not implemented yet");
         } catch (SQLException | ServiceException e) {
             handleError(resp, e);
         }
@@ -48,11 +52,15 @@ public class FolderServlet extends AbstractServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        // Edit folder
+        // Rename folder
         try (Connection connection = getConnection(getServletContext())) {
+            String folderId = req.getParameter("folder_id");
             String name = req.getParameter("name");
-            sendMessage(resp, SC_OK, "test");
-            throw new ServiceException("Service not implemented yet");
+
+            FolderDao folderDao = new DatabaseFolderDao(connection);
+            FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
+            folderService.rename(folderId, name);
+            sendMessage(resp, SC_OK, "Folder renamed");
         } catch (SQLException | ServiceException e) {
             handleError(resp, e);
         }
@@ -62,9 +70,12 @@ public class FolderServlet extends AbstractServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         // Delete folder
         try (Connection connection = getConnection(getServletContext())) {
-            String id = req.getParameter("id");
-            sendMessage(resp, SC_OK, "test");
-            throw new ServiceException("Service not implemented yet");
+            String folderId = req.getParameter("folder_id");
+
+            FolderDao folderDao = new DatabaseFolderDao(connection);
+            FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
+            folderService.delete(folderId);
+            sendMessage(resp, SC_OK, "Folder deleted");
         } catch (SQLException | ServiceException e) {
             handleError(resp, e);
         }

@@ -47,7 +47,6 @@ function onRegisterButtonClicked() {
 function onLogoutResponse() {
     if (this.status === OK) {
         setUnauthorized();
-        clearMessages();
         showContents(['login-page'])
     } else {
         onOtherResponse(logoutContentDivEl, this);

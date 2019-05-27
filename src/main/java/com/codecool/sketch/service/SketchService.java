@@ -8,7 +8,7 @@ import com.codecool.sketch.service.exception.ServiceException;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface SketchService  extends AbstracttService{
+public interface SketchService  extends AbstractService {
     // Sketch fetchById(String id);
 
     List<EmptySketchData> fetchEmptiesByFolderId(String id) throws ServiceException, SQLException;

@@ -44,7 +44,7 @@ public class SketchServlet extends AbstractServlet {
 
             SketchDao sketchDao = new DatabaseSketchDao(connection);
             SketchService sketchService = new ImplSketchServiceImpl(fetchUser(req), sketchDao);
-            validateAdminMode(req, sketchService);
+            sketchService.validateAdminMode(fetchAdminMode(req));
             sketchService.update(sketchId, folderId, name, content);
 
             sendMessage(resp, SC_OK, "Sketch updated");

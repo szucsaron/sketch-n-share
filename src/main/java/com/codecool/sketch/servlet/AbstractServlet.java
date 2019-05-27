@@ -2,6 +2,7 @@ package com.codecool.sketch.servlet;
 
 import com.codecool.sketch.dto.MessageDto;
 import com.codecool.sketch.model.User;
+import com.codecool.sketch.service.AbstractService;
 import com.codecool.sketch.service.SketchService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer;
@@ -44,8 +45,7 @@ abstract class AbstractServlet extends HttpServlet {
         return loggedInUser;
     }
 
-    protected void validateAdminMode(HttpServletRequest req, SketchService sketchService) {
-        String adminMode = req.getParameter("admin_mode");
-        sketchService.validateAdminMode(adminMode);
+    protected String fetchAdminMode(HttpServletRequest req) {
+        return req.getParameter("admin_mode");
     }
 }

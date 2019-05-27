@@ -14,12 +14,15 @@ public class ImplAbstractService {
         this.user = user;
     }
 
-    protected int fetchUserId() {
+    protected int fetchUserId() throws ServiceException{
+        if (user == null) {
+            throw new ServiceException("Invalid user login!");
+        }
         return user.getId();
     }
 
-    public void validateAdminMode(String adminRequestCode) {
-        adminMode = adminRequestCode != null && adminRequestCode.equals('1');
+    public void validateAdminMode(String requestAdmin) {
+        adminMode = requestAdmin != null && requestAdmin.equals('1');
     }
 
     protected int fetchInt(String intStr, String msgVarName) throws ServiceException {

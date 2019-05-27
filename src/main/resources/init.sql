@@ -37,14 +37,17 @@ CREATE TABLE shares (
 
 INSERT INTO users (name, password, role) VALUES 
 ('a', 'a', '0'), --1
-('b', 'b', '0') --2
+('b', 'a', '0'), --2
+('Joe', 'a', '0'), --3
+('Rose', 'a', '0'), --4
+('Vladimir', 'a', '0') --5
 ;
 
 
 INSERT INTO folders (name, owner) VALUES
 ('Work', 1), --1
 ('Unfinished Projects', 1), --2
-('My Sketches', 2) --2
+('B''s Sketches', 2) --3
 ;
 
 INSERT INTO sketches (name, folders_id, content) VALUES 
@@ -57,5 +60,10 @@ INSERT INTO sketches (name, folders_id, content) VALUES
 ) -- 2
 ;
 
+INSERT INTO shares (users_id, folders_id) VALUES
+(2, 2),
+(3, 2),
+(5, 2),
+(1, 3);
 
 SELECT * FROM sketches

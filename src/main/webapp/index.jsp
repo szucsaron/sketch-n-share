@@ -14,6 +14,7 @@
     <c:url value="/register-page.js" var="registerScriptUrl"/>
     <c:url value="/folders-page.js" var="foldersViewerUrl"/>
     <c:url value="/folder-page.js" var="folderContentUrl"/>
+    <c:url value="/folder-share-page.js" var="folderShareUrl"/>
     <c:url value="/canvas-tools.js" var="canvasToolsUrl"/>
     <c:url value="/canvas-page.js" var="canvasUrl"/>
 
@@ -24,6 +25,7 @@
     <script src="${registerScriptUrl}"></script>
     <script src="${foldersViewerUrl}"></script>
     <script src="${folderContentUrl}"></script>
+    <script src="${folderShareUrl}"></script>
     <script src="${canvasToolsUrl}"></script>
 
     <script src="${canvasUrl}"></script>
@@ -69,6 +71,9 @@
     </div>
     <div id="folder-page" class="hidden page">
             This is a folder
+    </div>
+    <div id="folder-share-page" class="hidden page">
+        Shares of folder ...
     </div>
     
     <div id="navbar" >

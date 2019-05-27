@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseUserDao extends DatabaseAbstractDao implements UserDao {
     public DatabaseUserDao(Connection connection) {
@@ -18,20 +20,83 @@ public class DatabaseUserDao extends DatabaseAbstractDao implements UserDao {
         String sql = "SELECT * FROM users WHERE name = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, name);
-            preparedStatement.execute();
-            ResultSet rs = preparedStatement.getResultSet();
-            if (rs.next()) {
-                return fetchUser(rs);
-            } else {
-                return null;
-            }
+            return executeSingleFetch(preparedStatement);
         }
+    }
+
+    public List<User> fetchBySharedFolder(int ownerId, int folderId) throws SQLException {
+        String sql = "SELECT users.name, users.id, users.role  FROM users\n" +
+                "RIGHT JOIN shares ON users.id = users_id\n" +
+                "LEFT JOIN folders ON shares.folders_id = folders.id\n" +
+                "WHERE owner = ? AND folders_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, ownerId);
+            preparedStatement.setInt(2, folderId);
+            return executeMultipleFetch(preparedStatement);
+        }
+    }
+
+
+    public List<User> fetchBySharedFolder(int folderId) throws SQLException {
+        String sql = "SELECT users.*  FROM users\n" +
+                "RIGHT JOIN shares ON users.id = users_id\n" +
+                "WHERE folders_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, folderId);
+            return executeMultipleFetch(preparedStatement);
+        }
+    }
+
+    public void shareFolderWithUser(int userId, int folderId) throws SQLException {
+        String sql = "INSERT INTO shares (users_id, folders_id) VALUES (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, folderId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public void removeFolderShare(int userId, int folderId) throws SQLException {
+        String sql = "DELETE FROM shares WHERE users_id = ? AND folders_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, folderId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    // private
+
+    private User executeSingleFetch(PreparedStatement preparedStatement) throws SQLException {
+        preparedStatement.execute();
+        ResultSet rs = preparedStatement.getResultSet();
+        List<User> users = new ArrayList<>();
+        if (rs.next()) {
+            return fetchUser(rs);
+        } else {
+            return null;
+        }
+    }
+
+    private List<User> executeMultipleFetch(PreparedStatement preparedStatement) throws SQLException {
+        preparedStatement.execute();
+        ResultSet rs = preparedStatement.getResultSet();
+        List<User> users = new ArrayList<>();
+        while (rs.next()) {
+            users.add(fetchUser(rs));
+        }
+        return users;
     }
 
     private User fetchUser(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
         String name = resultSet.getString("name");
-        String password = resultSet.getString("password");
+        String password;
+        try {
+            password = resultSet.getString("password");
+        } catch (SQLException e) {
+            password = null;
+        }
         int roleInt = resultSet.getInt("role");
         Role role;
         switch (roleInt) {

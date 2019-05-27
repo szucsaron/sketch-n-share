@@ -4,43 +4,12 @@ const UNAUTHORIZED = 401;
 const NOT_FOUND = 404;
 const INTERNAL_SERVER_ERROR = 500;
 
-let loginContentDivEl;
-let registerContentDivEl;
-let profileContentDivEl;
-let taskContentDivEl;
-let tasksContentDivEl;
-let scheduleContentDivEl;
-let schedulesContentDivEl;
-let backToProfileContentDivEl;
-let logoutContentDivEl;
+let gFolderItemList = null;
+let gFolderShareItemList = null;
+let gSketchItemList = null;
+let gCanvas = null;
 
 
-function newInfo(targetEl, message) {
-    newMessage(targetEl, 'info', message);
-}
-
-function newError(targetEl, message) {
-    newMessage(targetEl, 'error', message);
-}
-
-function newMessage(targetEl, cssClass, message) {
-    clearMessages();
-
-    const pEl = document.createElement('p');
-    pEl.classList.add('message');
-    pEl.classList.add(cssClass);
-    pEl.textContent = message;
-
-    targetEl.appendChild(pEl);
-}
-
-function clearMessages() {
-    const messageEls = document.getElementsByClassName('message');
-    for (let i = 0; i < messageEls.length; i++) {
-        const messageEl = messageEls[i];
-        messageEl.remove();
-    }
-}
 
 function showContents(ids) {
     const contentEls = document.getElementsByClassName('page');
@@ -52,6 +21,10 @@ function showContents(ids) {
             contentEl.classList.add('hidden');
         }
     }
+}
+
+function handleMessage(resp) {
+    alert(JSON.parse(resp).message);
 }
 
 function removeAllChildren(el) {
@@ -128,7 +101,7 @@ class XhrSender {
         xhr.addEventListener('load', this.onResponse);
         xhr.addEventListener('error', onNetworkError);
         
-        if (this.method == 'afadfa') {
+        if (this.method == 'POST') {
             xhr.open(this.method, this.url);
             xhr.send(this.params);
         } else {

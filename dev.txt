@@ -1,22 +1,39 @@
-links:
+optional params for all methods: admin_mode
+
 /login
 	POST: login a user:
-		params: name, password
+		params: userName, password
 		return: MessageDto
 
 /protected/folder
-	GET: get all folders of a user
+	x GET: get all folders of a user
 		params: -
 		return: List<Folder>
-	POST: Create new folder
-		params: name
+	x POST: Create new folder
+		params: userName
 		return: MessageDto
-	PUT: Rename folder
-		params: id, name
+	x PUT: Rename folder
+		params: folder_id, userName
 		return: MessageDto
 	DELETE: Delete folder
-		params: id
+		params: folder_d
 		return: MessageDto
+
+/protected/folder_share
+    GET: get all shared users of a folder
+        params: folder_id
+        return: List<User>
+    POST: share folder with user
+        params: folder_id, user_id
+        return: MessageDto
+    DELETE: remove user share from a folder
+        params: folder_id, user_id
+        return: MessageDto
+
+/protected/folder_share/with_me
+    GET: get all folders shared with user
+        params: user_id
+        return: List<Folder>
 		
 /protected/sketches
 	GET: get all sketches in a folder as empty data containers
@@ -24,16 +41,16 @@ links:
 		params: folder_id
 		return: List<EmptySketchData>
 	POST: create an empty sketch
-		params: folder_id, id, name
+		params: folder_id, userId, userName
 		return: MessageDto
 	PUT: modify sketch header
-		params: name
+		params: userName
 		return: MessageDto
 	PATCH: move sketch to different folder
-		params: id, folder_id
+		params: userId, folder_id
 		return MessageDto
 	DELETE: delete sketch
-		params: id
+		params: userId
 		return: MessageDto
 		
 /protected/sketch
@@ -41,5 +58,5 @@ links:
 		params: sketch_id
 		return: Sketch
 	POST: modify sketch
-		params: sketch_id, folder_id, name, content
+		params: sketch_id, folder_id, userName, content
 		return: MessageDto

@@ -11,6 +11,7 @@ import java.util.List;
 
 public class ImplFolderServiceImpl extends ImplAbstractService implements FolderService {
     private FolderDao folderDao;
+
     public ImplFolderServiceImpl(User user, FolderDao folderDao) {
         super(user);
         this.folderDao = folderDao;
@@ -23,4 +24,28 @@ public class ImplFolderServiceImpl extends ImplAbstractService implements Folder
             return folderDao.fetchByUserId(fetchUserId());
         }
     }
+
+    public void createNew(String name) throws ServiceException, SQLException {
+        folderDao.createNew(name, fetchUserId());
+    }
+
+    public void rename(String folderId, String name) throws ServiceException, SQLException {
+        int folderIdVal = fetchInt(folderId, "folderId");
+        if (adminMode) {
+            folderDao.rename(folderIdVal, name);
+        } else {
+            folderDao.rename(fetchUserId(), folderIdVal, name);
+        }
+    }
+
+    public void delete(String folderId) throws ServiceException, SQLException {
+        int folderIdVal = fetchInt(folderId, "folderId");
+        if (adminMode) {
+            folderDao.delete(folderIdVal);
+        } else {
+            folderDao.delete(fetchUserId(), folderIdVal);
+        }
+    }
+
+
 }

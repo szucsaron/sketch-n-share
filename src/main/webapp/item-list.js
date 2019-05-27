@@ -1,24 +1,51 @@
 class ItemList {
-    constructor(id, items, onItemClicked, onEditDone, onDeleteClicked, onNewCreated) {
-        this.items = items;
+    constructor(id, onItemClicked) {
         this._onItemClickedCallback = onItemClicked;
-        this._onEditDoneCallback = onEditDone;
-        this._onDeleteClickedCallback = onDeleteClicked;
-        this._onNewItemCallback = onNewCreated;
+        this._onEditDoneCallback = null;
+        this._onDeleteClickedCallback = null;
+        this._onNewItemCallback = null;
+        this._onShareClickedCallback = null;
 
         this.el = document.createElement('div');
         this.el.setAttribute('id', id);
         this.tableEl = document.createElement('table');
-        this.newBtEl = document.createElement('button');
-        this.newBtEl.textContent = 'New';
-        this.newBtEl.addEventListener('click', this._onNewClicked.bind(this));
+        
         this.el.appendChild(this.tableEl);
-        this.el.appendChild(this.newBtEl);
-        this.refresh(items);
+
+        this._fieldCreators = [];
+
     }
 
     create() {
         return this.el;
+    }
+
+    setAsEditable(editCallback) {
+        this._onEditDoneCallback = editCallback;
+        this._fieldCreators.push(this._generateEditField.bind(this));
+    }
+
+    setAsDeletable(deleteCallback) {
+        this._onDeleteClickedCallback = deleteCallback;
+        this._fieldCreators.push(this._generateDeleteField.bind(this));
+    }
+
+    setAsShareable(shareCallback) {
+        this._onShareClickedCallback = shareCallback;
+        this._fieldCreators.push(this._generateShareField.bind(this));
+    }
+
+    setAsCreatable(newItemCallback) {
+        this._onNewItemCallback = newItemCallback;
+        this.newBtEl = document.createElement('button');
+        this.newBtEl.textContent = 'New';
+        this.newBtEl.addEventListener('click', this._onNewClicked.bind(this));
+        this.el.appendChild(this.newBtEl);
+    }
+
+    refreshWithNew(items) {
+        this.items = items;
+        this.refresh();
     }
 
     refresh() {
@@ -34,30 +61,48 @@ class ItemList {
         const itemNameEl = document.createElement('td');
         itemNameEl.setAttribute('item_id', item.id);
         itemNameEl.textContent = item.name;
-        if (this._onItemClickedCallback != undefined) {
+        if (this._onItemClickedCallback != null) {
             itemNameEl.addEventListener('click', this._onItemClickedCallback);
+            trEl.appendChild(itemNameEl);
         }
+        for (let i = 0; i < this._fieldCreators.length; i++) {
+            trEl.appendChild(this._fieldCreators[i](item));
+        }
+        return trEl;
+    }
 
+    _generateEditField(item) {
         const itemEditEl = document.createElement('td');
         itemEditEl.setAttribute('item_id', item.id);
         itemEditEl.setAttribute('mode', 'edit');
         itemEditEl.textContent = "Edit";
-        if (this._onEditDoneCallback != undefined) {
-            itemEditEl.addEventListener('click', this._onEditClicked.bind(this));
-        }
-        
+        itemEditEl.addEventListener('click', this._onEditClicked.bind(this));
+        return itemEditEl;
+    }
+
+    _generateEditField(item) {
+        const itemEditEl = document.createElement('td');
+        itemEditEl.setAttribute('item_id', item.id);
+        itemEditEl.setAttribute('mode', 'edit');
+        itemEditEl.textContent = "Edit";
+        itemEditEl.addEventListener('click', this._onEditClicked.bind(this));
+        return itemEditEl;
+    }
+
+    _generateDeleteField(item) {
         const itemDeleteEl = document.createElement('td');
         itemDeleteEl.setAttribute('item_id', item.id);
         itemDeleteEl.textContent = "Delete";
-        if (this._onDeleteClickedCallback != undefined) {
-            itemDeleteEl.addEventListener('click', this._onDeleteClicked.bind(this));
-        }
+        itemDeleteEl.addEventListener('click', this._onDeleteClicked.bind(this));
+        return itemDeleteEl;
+    }
 
-        trEl.appendChild(itemNameEl);
-        trEl.appendChild(itemEditEl);
-        trEl.appendChild(itemDeleteEl);
-        this.tableEl.appendChild(trEl);
-        return trEl;
+    _generateShareField(item) {
+        const itemDeleteEl = document.createElement('td');
+        itemDeleteEl.setAttribute('item_id', item.id);
+        itemDeleteEl.textContent = "Manage shares";
+        itemDeleteEl.addEventListener('click', this._onShareClickedCallback);
+        return itemDeleteEl;
     }
 
     _get_target(res) {
@@ -73,15 +118,19 @@ class ItemList {
         const el = this._get_target(res);
         const mode = el.getAttribute('mode');
         if (mode == 'edit') {
-            this._onEdit(res, el);
+            this._transformFieldToEditable(el);
         } else if (mode == 'save') {
-            this._onSave(res, el);
+            this._saveItem(el);
         }
     }
 
-    _onEdit(res, el) {
+    _transformFieldToEditable(el) {
         el.setAttribute('mode', 'save');
-        el.textContent = 'Save';
+        if (el.getAttribute('item_id') == 'new') {
+            el.textContent = 'Create';
+        } else {
+            el.textContent = 'Save';
+        }
 
         const nameEl = el.parentElement.childNodes[0];
         nameEl.removeEventListener('click', this._onItemClickedCallback);
@@ -96,7 +145,7 @@ class ItemList {
         //nameEl.appendChild(inputEl);
     }
 
-    _onSave(res, el) {
+    _saveItem(el) {
         const tdEl = el.parentElement.childNodes[0]
         const nameEl = tdEl.childNodes[0];
         const newName = nameEl.value;
@@ -122,10 +171,10 @@ class ItemList {
     }
 
     _onNewClicked(res) {
-        const el = this._get_target(res);
         let item = {}
         item.id = 'new';
         item.name = 'New';
-        const row = this._generateRow(item);
+        const rowEl = this._generateRow(item);
+        this.tableEl.appendChild(rowEl);
     }
 }
