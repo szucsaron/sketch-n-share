@@ -68,10 +68,10 @@ public class FolderShareServlet extends AbstractServlet{
             UserService userService = new ImplUserService(fetchUser(req), userDao);
 
             String folderId = req.getParameter("folder_id");
-            String userName = req.getParameter("user_name");
-            userService.shareFolderWithUser(userName, folderId);
+            String user_id = req.getParameter("user_id");
+            userService.unshareFolderWithUser(user_id, folderId);
 
-            sendMessage(resp, HttpServletResponse.SC_OK, "Folder shared");
+            sendMessage(resp, HttpServletResponse.SC_OK, "Folder unshared");
 
 
         } catch (ServiceException ex) {

@@ -15,6 +15,6 @@ public interface UserService  extends AbstractService {
 
     void shareFolderWithUser(String userName, String folderId) throws SQLException, ServiceException;
 
-    void unshareFolderWithUser(String userName, String folderId) throws SQLException, ServiceException;
+    void unshareFolderWithUser(String userId, String folderId) throws SQLException, ServiceException;
 
 }

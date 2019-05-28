@@ -25,12 +25,14 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
     }
 
     public List<Folder> fetchAll() throws SQLException {
-        String sql = "SELECT * FROM folders";
+        String sql = "SELECT folders.*, users.name AS owner_name FROM folders\n" +
+                "LEFT JOIN users ON users.id = folders.owner";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.execute();
             return executeMultipleFetch(preparedStatement);
         }
     }
+
 
     public void createNew(String name, int userId) throws SQLException {
         String sql = "INSERT INTO folders (name, owner) VALUES (?, ?)";
@@ -52,7 +54,7 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
     }
 
     public void rename(int folderId, String name) throws SQLException {
-        String sql = "UPDATE folders SET name = ? AND id = ?";
+        String sql = "UPDATE folders SET name = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, name);
             preparedStatement.setInt(2, folderId);

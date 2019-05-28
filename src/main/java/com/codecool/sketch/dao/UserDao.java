@@ -13,7 +13,7 @@ public interface UserDao {
     List<User> fetchBySharedFolder(int ownerId, int folderId) throws SQLException;
 
 
-    void shareFolderWithUser(int owner, int userId, int folderId) throws SQLException;
+    void shareFolderWithUser(int owner, String userName, int folderId) throws SQLException;
 
-    void removeFolderShare(int owner, int userId, int folderId) throws SQLException;
+    void unshareFolderWithUser(int owner, int userId, int folderId) throws SQLException;
 }

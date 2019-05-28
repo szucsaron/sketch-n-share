@@ -34,6 +34,9 @@ function onFolderShareCreateRequested(res) {
 
 
 function onFolderShareDeleteRequested(res) {
-    alert('delete share');
     console.log(res);
+    const xhr = new XhrSender('DELETE', 'protected/folder_share', onFolderShareUpdateResponse)
+    xhr.addParam('folder_id', retrieveFolderId());
+    xhr.addParam('user_id', res.id);
+    xhr.send();
 }

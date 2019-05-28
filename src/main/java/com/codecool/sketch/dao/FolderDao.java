@@ -8,6 +8,8 @@ import java.util.List;
 public interface FolderDao {
     List<Folder> fetchByUserId(int userId) throws SQLException;
 
+    List<Folder> fetchAll() throws SQLException;
+
     void createNew(String name, int userId) throws SQLException;
 
     void rename(int userId, int folderId, String name) throws SQLException;

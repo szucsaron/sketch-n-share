@@ -13,8 +13,11 @@ optional params for all methods: admin_mode
 		params: userName
 		return: MessageDto
 	x PUT: Rename folder
-		params: folder_id, userName
+		params: folder_id, name
 		return: MessageDto
+	PATCH: Change folder ownership (Only available for admin)
+	    params: folder_id, owner
+	    return: MessageDto
 	x DELETE: Delete folder
 		params: folder_d
 		return: MessageDto
@@ -26,9 +29,10 @@ optional params for all methods: admin_mode
     x POST: share folder with user
         params: folder_id, user_name
         return: MessageDto
-    DELETE: remove user share from a folder
+    x DELETE: remove user share from a folder
         params: folder_id, user_id
         return: MessageDto
+
 
 /protected/folder_share/with_me
     GET: get all folders shared with user

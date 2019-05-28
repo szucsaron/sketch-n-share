@@ -29,6 +29,15 @@ public class DatabaseSketchDao extends DatabaseAbstractDao implements SketchDao 
         }
     }
 
+    public List<EmptySketchData> findByFolderId(int folderId) throws SQLException {
+        String sql = "SELECT name, id, folders_id FROM sketches WHERE folders_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, folderId);
+            return executeMultipleFetch(preparedStatement);
+        }
+    }
+
+
     public Sketch findById(int userId, int id) throws SQLException {
         String sql = "SELECT sketches.* FROM sketches \n" +
                 "LEFT JOIN folders ON folders_id = folders.id \n" +
@@ -50,16 +59,14 @@ public class DatabaseSketchDao extends DatabaseAbstractDao implements SketchDao 
     }
 
     public void update(int userId, int id, int folderId, String name, String content) throws SQLException {
-        String sql = "UPDATE sketches SET name = ?, folders_id = ?, content = ? " +
-                "LEFT JOIN folders ON folders_id = folders.id  " +
-                "WHERE owner = ? AND sketches.id = ?";
+        String sql = "SELECT \"update_sketch\" (?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, name);
-            preparedStatement.setInt(2, folderId);
-            preparedStatement.setString(3, content);
-            preparedStatement.setInt(4, userId);
-            preparedStatement.setInt(5, id);
-            preparedStatement.executeUpdate();
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, id);
+            preparedStatement.setInt(3, folderId);
+            preparedStatement.setString(4, name);
+            preparedStatement.setString(5, content);
+            preparedStatement.execute();
         }
     }
 

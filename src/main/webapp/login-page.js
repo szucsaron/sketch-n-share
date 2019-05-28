@@ -11,6 +11,7 @@ function getAuthorization() {
 }
 
 function setUnauthorized() {
+    localStorage.removeItem('adminMode');
     return localStorage.removeItem('user');
 }
 

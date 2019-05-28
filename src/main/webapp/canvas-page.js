@@ -48,21 +48,14 @@ function onCanvasResponse() {
 
 
 function onCanvasSaveClick() {
-    console.log('saveee');
     const header = retrieveSketchHeader();
     const dtoJson = JSON.stringify(convertDrawObjectsToDto(gCanvas.drawObjects));
-    console.log(dtoJson)
-    params = new URLSearchParams();
-    params.append('sketch_id', retrieveSketchId());
-    params.append('folder_id', header.folderId);
-    params.append('name', header.name);
-    params.append('content', dtoJson);
-
-    const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', onCanvasSaveResponse);
-        xhr.addEventListener('error', onNetworkError);
-        xhr.open('POST', 'protected/sketch');
-        xhr.send(params);
+    const xhr = new XhrSender('POST', 'protected/sketch', onCanvasSaveResponse);
+    xhr.addParam('sketch_id', retrieveSketchId());
+    xhr.addParam('folder_id', header.folderId);
+    xhr.addParam('name', header.name);
+    xhr.addParam('content', dtoJson);
+    xhr.send();
 }
 
 function onCanvasBackButtonClicked() {
@@ -70,8 +63,7 @@ function onCanvasBackButtonClicked() {
 }
 
 function onCanvasSaveResponse() {
-    const data = JSON.parse(this.responseText);
-    alert(data.message);
+    handleMessage(this.responseText)
 }
 
 // Data handling

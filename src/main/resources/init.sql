@@ -1,3 +1,4 @@
+DROP FUNCTION IF EXISTS update_sketch;
 DROP FUNCTION IF EXISTS unshare_folder_with_user;
 DROP FUNCTION IF EXISTS share_folder_with_user;
 DROP TABLE IF EXISTS shares;
@@ -24,30 +25,42 @@ CREATE TABLE folders (
 CREATE TABLE sketches (
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(100),
-	folders_id INT REFERENCES folders(id),
+	folders_id INT REFERENCES folders(id)  ON DELETE CASCADE,
 	content TEXT
 );
 
 CREATE TABLE shares (
-	users_id INT REFERENCES users(id),
-	folders_id INT REFERENCES folders(id),
+	users_id INT REFERENCES users(id) ON DELETE CASCADE,
+	folders_id INT REFERENCES folders(id)  ON DELETE CASCADE,
 	PRIMARY KEY (users_id, folders_id)
 );
 
 
 -- Functions
+/*
+The following functions are used to simplify table insertions and updates where user verification
+would normally call for multiple SQL queries made by the db client. Using these functions requires
+only a single query, and everything else is taken care of here, at db level.
+In the params, 'owner' stands for the user id of the function caller needed to be verified.
+In case of illegal owners or bad arguments, the functions throw exceptions.
 
---In the following functions owner is used as a user verification param
+*/
 
 -- Share a folder with user.
--- params: owner, folder id, user id
-CREATE FUNCTION share_folder_with_user(int, int, int) RETURNS void 
+-- params: owner, folder id, user name
+CREATE FUNCTION share_folder_with_user(int, int, text) RETURNS void 
 AS '
+	DECLARE	
+		user_id integer;
 	BEGIN
+		user_id = (SELECT id FROM users WHERE name = $3);
+		IF user_id IS NULL THEN
+			RAISE EXCEPTION ''User doesn''''t exist '';
+		END IF;
 		IF (SELECT COUNT(*) FROM folders WHERE owner = $1 AND id = $2) = 0 THEN
 			RAISE EXCEPTION ''Folders can only shared by their owners'';
 		END IF;
-		INSERT INTO shares (users_id, folders_id) VALUES ($3, $2);
+		INSERT INTO shares (users_id, folders_id) VALUES (user_id, $2);
 	END; '
 LANGUAGE plpgsql;
 
@@ -56,13 +69,33 @@ LANGUAGE plpgsql;
 -- params: owner, folder id, user id
 CREATE FUNCTION unshare_folder_with_user(int, int, int) RETURNS void 
 AS '
-	BEGIN
+	BEGIN 
 		IF (SELECT COUNT(*) FROM folders WHERE owner = $1 AND id = $2) = 0 THEN
 			RAISE EXCEPTION ''Folders can only shared by their owners'';
 		END IF;
 		DELETE FROM shares WHERE users_id = $3 AND folders_id = $2;
 	END; '
 LANGUAGE plpgsql;
+
+
+-- Update a sketch
+-- params: 1 owner, 2 id, 3 folderId, 4 name, 5 content
+CREATE FUNCTION update_sketch(int, int, int, text, text) RETURNS void
+AS 
+' 
+	BEGIN
+		IF (SELECT COUNT(*) FROM users LEFT JOIN folders ON users.id = owner
+			WHERE users.id = $1 AND folders.id = $3) = 0 THEN
+			RAISE EXCEPTION ''Sketches can be only updated by the owners of their folders'';
+		END IF;
+		UPDATE sketches SET folders_id = $3, name = $4, content = $5 WHERE id = $2;
+	END;
+
+'
+LANGUAGE plpgsql;
+
+
+
 
 -- Insert data
 
@@ -91,12 +124,10 @@ INSERT INTO sketches (name, folders_id, content) VALUES
 ) -- 2
 ;
 
-INSERT INTO shares (users_id, folders_id) VALUES
-(2, 2),
-(3, 2),
-(5, 2),
-(1, 3);
 
 
 
+SELECT "update_sketch" (1, 1, 1, 'test name', 'test content');
+ 
+SELECT * FROM sketches;
 

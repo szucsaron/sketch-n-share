@@ -9,7 +9,13 @@ import java.util.List;
 public interface SketchDao {
     List<EmptySketchData> findByFolderId(int userId, int folderId) throws SQLException;
 
+    List<EmptySketchData> findByFolderId(int folderId) throws SQLException;
+
+
     Sketch findById(int userId, int id) throws SQLException;
+
+    Sketch findById(int id) throws SQLException;
+
 
     void update(int userId, int id, int folderId, String name, String content) throws SQLException;
 

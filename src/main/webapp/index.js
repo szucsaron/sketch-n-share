@@ -56,7 +56,17 @@ function onOtherResponse(targetEl, xhr) {
     }
 }
 
+function storeAdminMode(isAdminModeOn) {
+    localStorage.setItem('adminMode', isAdminModeOn);
+}
 
+function hasAdminMode() {
+    const adminMode = localStorage.getItem('adminMode');
+    if (adminMode == null) {
+        return false;
+    }
+    return adminMode;
+}
 
 function storeItem(name, value) {
     return localStorage.setItem(name, JSON.stringify(value));
@@ -78,10 +88,12 @@ function onLoad() {
 
     document.getElementById('canvas-save').addEventListener('click', onCanvasSaveClick);
     
-
+    /*
     if (hasAuthorization()) {
         onProfileLoad(getAuthorization());
     }
+    */
+    // storeAdminMode(true);
 }
 
 class XhrSender {

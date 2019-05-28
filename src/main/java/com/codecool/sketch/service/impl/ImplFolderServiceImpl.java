@@ -19,7 +19,7 @@ public class ImplFolderServiceImpl extends ImplAbstractService implements Folder
 
     public List<Folder> fetchAll() throws ServiceException, SQLException {
         if (adminMode) {
-            return null;
+            return folderDao.fetchAll();
         } else {
             return folderDao.fetchByUserId(fetchUserId());
         }
