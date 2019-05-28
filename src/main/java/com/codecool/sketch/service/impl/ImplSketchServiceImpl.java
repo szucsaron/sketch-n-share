@@ -21,7 +21,7 @@ public class ImplSketchServiceImpl extends ImplAbstractService implements Sketch
     public List<EmptySketchData> fetchEmptiesByFolderId(String folderId) throws ServiceException, SQLException {
         int folderIdVal = fetchInt(folderId, "folderId");
         if (adminMode) {
-          return sketchDao.findByFolderId(folderIdVal);
+            return sketchDao.findByFolderId(folderIdVal);
         } else {
             return sketchDao.findByFolderId(fetchUserId(), folderIdVal);
         }
@@ -46,6 +46,24 @@ public class ImplSketchServiceImpl extends ImplAbstractService implements Sketch
         } else {
             int userIdVal = fetchUserId();
             sketchDao.update(userIdVal, idVal, folderIdVal, name, content);
+        }
+    }
+
+    public void create(String folderId, String name) throws ServiceException, SQLException {
+        int folderIdVal = fetchInt(folderId, "folderId");
+        if (adminMode) {
+            sketchDao.create(folderIdVal, name);
+        } else {
+            sketchDao.create(fetchUserId(), folderIdVal, name);
+        }
+    }
+
+    public void rename(String sketchId, String name) throws ServiceException, SQLException {
+        int idVal = fetchInt(sketchId, "sketchId");
+        if (adminMode) {
+            sketchDao.rename(idVal, name);
+        } else {
+            sketchDao.rename(fetchUserId(), idVal, name);
         }
     }
 

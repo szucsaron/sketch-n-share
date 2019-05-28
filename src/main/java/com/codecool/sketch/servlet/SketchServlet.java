@@ -26,6 +26,7 @@ public class SketchServlet extends AbstractServlet {
             String sketchId = req.getParameter("sketch_id");
             SketchDao sketchDao = new DatabaseSketchDao(connection);
             SketchService sketchService = new ImplSketchServiceImpl(fetchUser(req), sketchDao);
+            sketchService.validateAdminMode(fetchAdminMode(req));
             Sketch sketch = sketchService.fetchSketchById(sketchId);
             sendMessage(resp, SC_OK, sketch);
         } catch (SQLException | ServiceException e) {

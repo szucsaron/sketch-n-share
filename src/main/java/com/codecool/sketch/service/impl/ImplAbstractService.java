@@ -23,7 +23,11 @@ public class ImplAbstractService {
     }
 
     public void validateAdminMode(String requestAdmin) {
-        adminMode = requestAdmin != null && requestAdmin.equals('1') && user.getRole().equals(Role.ADMIN);
+        if (requestAdmin != null) {
+            adminMode = requestAdmin.equals("1") && user.getRole().equals(Role.ADMIN);
+        } else {
+            adminMode = false;
+        }
     }
 
     protected int fetchInt(String intStr, String msgVarName) throws ServiceException {

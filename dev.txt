@@ -1,4 +1,5 @@
-optional params for all methods: admin_mode
+optional params for all methods:
+admin_mode: 1: request admin mode
 
 /login
 	x POST: login a user:
@@ -44,23 +45,23 @@ optional params for all methods: admin_mode
 		 (without content)
 		params: folder_id
 		return: List<EmptySketchData>
-	POST: create an empty sketch
-		params: folder_id, userId, userName
+	x POST: create an empty sketch
+		params: folder_id, name
 		return: MessageDto
-	PUT: modify sketch header
-		params: userName
+	x PUT: rename sketch
+		params: id, name
 		return: MessageDto
 	PATCH: move sketch to different folder
-		params: userId, folder_id
+		params: sketch_id, folder_id
 		return MessageDto
 	DELETE: delete sketch
-		params: userId
+		params: sketch_id
 		return: MessageDto
 		
 /protected/sketch
 	x GET: get a sketch:
 		params: sketch_id
 		return: Sketch
-	POST: modify sketch
+	x POST: modify sketch
 		params: sketch_id, folder_id, userName, content
 		return: MessageDto

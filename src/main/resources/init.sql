@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS rename_sketch;
+DROP FUNCTION IF EXISTS create_sketch;
 DROP FUNCTION IF EXISTS update_sketch;
 DROP FUNCTION IF EXISTS unshare_folder_with_user;
 DROP FUNCTION IF EXISTS share_folder_with_user;
@@ -57,8 +59,8 @@ AS '
 		IF user_id IS NULL THEN
 			RAISE EXCEPTION ''User doesn''''t exist '';
 		END IF;
-		IF (SELECT COUNT(*) FROM folders WHERE owner = $1 AND id = $2) = 0 THEN
-			RAISE EXCEPTION ''Folders can only shared by their owners'';
+		IF (SELECT owner FROM folders WHERE id = $2) != $1 THEN
+			RAISE EXCEPTION ''Folders sharing can only be managed by owners'';
 		END IF;
 		INSERT INTO shares (users_id, folders_id) VALUES (user_id, $2);
 	END; '
@@ -70,8 +72,8 @@ LANGUAGE plpgsql;
 CREATE FUNCTION unshare_folder_with_user(int, int, int) RETURNS void 
 AS '
 	BEGIN 
-		IF (SELECT COUNT(*) FROM folders WHERE owner = $1 AND id = $2) = 0 THEN
-			RAISE EXCEPTION ''Folders can only shared by their owners'';
+		IF (SELECT owner FROM folders WHERE id = $2) != $1 THEN
+			RAISE EXCEPTION ''Folders sharing can only be managed by owners'';
 		END IF;
 		DELETE FROM shares WHERE users_id = $3 AND folders_id = $2;
 	END; '
@@ -84,8 +86,8 @@ CREATE FUNCTION update_sketch(int, int, int, text, text) RETURNS void
 AS 
 ' 
 	BEGIN
-		IF (SELECT COUNT(*) FROM users LEFT JOIN folders ON users.id = owner
-			WHERE users.id = $1 AND folders.id = $3) = 0 THEN
+		IF (SELECT users.id FROM users LEFT JOIN folders ON users.id = owner
+			WHERE folders.id = $3) != $1 THEN
 			RAISE EXCEPTION ''Sketches can be only updated by the owners of their folders'';
 		END IF;
 		UPDATE sketches SET folders_id = $3, name = $4, content = $5 WHERE id = $2;
@@ -95,12 +97,44 @@ AS
 LANGUAGE plpgsql;
 
 
+-- Create new sketch
+-- params: owner, folder_id, name
+CREATE FUNCTION create_sketch(int, int, text) RETURNS void
+AS 
+' 
+	BEGIN
+		IF (SELECT owner FROM folders WHERE id = $2) != $1 THEN
+			RAISE EXCEPTION ''Sketches can be only created by the owners of their folders'';
+		END IF;
+		INSERT INTO sketches (folders_id, name) VALUES ($2, $3);
+	END;
+
+'
+LANGUAGE plpgsql;
+
+
+-- Rename existing sketch
+-- params: owner, sketch_id, name
+CREATE FUNCTION rename_sketch(int, int, text) RETURNS void
+AS 
+' 
+	BEGIN
+		IF (SELECT owner FROM folders
+			RIGHT JOIN sketches ON folders.id = folders_id
+			WHERE sketches.id = $2) != $1 THEN
+			RAISE EXCEPTION ''Sketches can be only renamed by the owners of their folders'';
+		END IF;
+		UPDATE sketches SET name = $3 WHERE id = $2;
+	END;
+
+'
+LANGUAGE plpgsql;
 
 
 -- Insert data
 
 INSERT INTO users (name, password, role) VALUES 
-('a', 'a', '0'), --1
+('a', 'a', '1'), --1
 ('b', 'a', '0'), --2
 ('Joe', 'a', '0'), --3
 ('Rose', 'a', '0'), --4
@@ -121,13 +155,7 @@ INSERT INTO sketches (name, folders_id, content) VALUES
 ), -- 2
 
 ('Jenny Tries Symmetry', 2, '{"lines":[[[562,800],[872,369],"black"],[[876,375],[1187,797],"black"],[[1187,797],[569,810],"black"],[[755,816],[742,930],"black"],[[1014,815],[1014,911],"black"],[[881,377],[859,262],"black"],[[866,272],[755,249],"black"],[[755,249],[697,170],"black"],[[696,170],[719,65],"black"],[[719,65],[840,24],"black"],[[845,24],[1041,30],"black"],[[1041,30],[1086,88],"black"],[[1091,99],[1134,164],"black"],[[1135,169],[1106,214],"black"],[[1078,235],[977,301],"black"],[[977,301],[880,279],"black"],[[1086,246],[1114,226],"black"],[[831,81],[795,97],"black"],[[795,97],[829,134],"black"],[[829,134],[877,129],"black"],[[877,129],[849,89],"black"],[[1002,94],[962,120],"black"],[[963,126],[991,165],"black"],[[991,165],[1027,140],"black"],[[1027,140],[1008,97],"black"],[[795,166],[835,210],"black"],[[835,210],[893,227],"black"],[[893,227],[970,231],"black"],[[970,231],[1011,218],"black"],[[1011,218],[1030,231],"black"],[[1040,237],[1048,252],"black"],[[1072,52],[1230,211],"black"],[[1230,211],[1317,428],"black"],[[742,69],[632,159],"black"],[[632,159],[498,349],"black"],[[707,161],[651,278],"black"],[[637,314],[609,352],"black"],[[1140,200],[1223,379],"black"],[[1223,379],[1311,562],"black"],[[1095,249],[1130,349],"black"],[[1142,344],[1220,503],"black"],[[774,262],[738,329],"black"],[[738,329],[677,457],"black"],[[1009,301],[1016,327],"black"],[[1017,328],[1136,544],"black"],[[1042,597],[1649,224],"black"],[[706,610],[332,230],"black"],[[1565,187],[1524,101],"black"],[[1524,101],[1559,57],"black"],[[1559,57],[1643,55],"black"],[[1643,55],[1706,102],"black"],[[1706,102],[1740,205],"black"],[[1740,206],[1620,223],"black"],[[1620,223],[1568,193],"black"],[[1528,108],[1425,25],"black"],[[1425,25],[1561,69],"black"],[[1641,62],[1730,19],"black"],[[1730,19],[1711,105],"black"],[[1576,118],[1629,134],"black"],[[1678,108],[1664,144],"black"],[[1651,163],[1669,200],"black"],[[1685,224],[1704,606],"black"],[[1709,615],[1552,771],"black"],[[1717,616],[1835,776],"black"],[[1706,430],[1619,369],"black"],[[1715,419],[1831,319],"black"]]}'
-) -- 2
+) -- 3
 ;
 
-
-
-
-SELECT "update_sketch" (1, 1, 1, 'test name', 'test content');
- 
-SELECT * FROM sketches;
 

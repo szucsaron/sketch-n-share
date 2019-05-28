@@ -27,8 +27,44 @@ public class SketchesServlet extends AbstractServlet {
             String folderId = req.getParameter("folder_id");
             SketchDao sketchDao = new DatabaseSketchDao(connection);
             SketchService sketchService = new ImplSketchServiceImpl(fetchUser(req), sketchDao);
+            sketchService.validateAdminMode(fetchAdminMode(req));
             List<EmptySketchData> emptySketchData = sketchService.fetchEmptiesByFolderId(folderId);
             sendMessage(resp, SC_OK, emptySketchData);
+        } catch (SQLException | ServiceException e) {
+            handleError(resp, e);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // create empty sketch
+        try (Connection connection = getConnection(getServletContext())) {
+
+            SketchDao sketchDao = new DatabaseSketchDao(connection);
+            SketchService sketchService = new ImplSketchServiceImpl(fetchUser(req), sketchDao);
+            sketchService.validateAdminMode(fetchAdminMode(req));
+            String folderId = req.getParameter("folder_id");
+            String sketchName = req.getParameter("name");
+            sketchService.create(folderId, sketchName);
+
+
+            sendMessage(resp, SC_OK, "New sketch created");
+        } catch (SQLException | ServiceException e) {
+            handleError(resp, e);
+        }
+    }
+
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // Rename sketch
+        try (Connection connection = getConnection(getServletContext())) {
+            SketchDao sketchDao = new DatabaseSketchDao(connection);
+            SketchService sketchService = new ImplSketchServiceImpl(fetchUser(req), sketchDao);
+            sketchService.validateAdminMode(fetchAdminMode(req));
+            String id = req.getParameter("id");
+            String name = req.getParameter("name");
+            sketchService.rename(id, name);
+
+            sendMessage(resp, SC_OK, "Sketch renamed");
         } catch (SQLException | ServiceException e) {
             handleError(resp, e);
         }

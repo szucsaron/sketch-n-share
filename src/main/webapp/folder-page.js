@@ -15,12 +15,14 @@ function retrieveFolderId() {
 }
 
 function onFolderResponse() {
-    console.log(this.responseText);
-    const sketches = JSON.parse(this.response);
     const folderContentEl = document.getElementById('folder-page');
     removeAllChildren(folderContentEl);
-    const sketchesTable = createItemList('sketches-table', sketches, onSketchClicked, onSketchEditClicked, onSketchDeleteClicked);
-    folderContentEl.appendChild(sketchesTable);
+    gSketchItemList = new ItemList('sketch-item-list', onSketchClicked);
+    gSketchItemList.setAsEditable(onSketchEditRequested);
+    gSketchItemList.setAsCreatable(onSketchCreateRequested);
+    gSketchItemList.setAsDeletable(onSketchDeleteRequested);
+    folderContentEl.appendChild(gSketchItemList.create());
+    gSketchItemList.refreshWithNew(JSON.parse(this.responseText));
 }
 
 function onSketchClicked() {
@@ -28,10 +30,28 @@ function onSketchClicked() {
     navigateToCanvas()
 }
 
-function onSketchEditClicked() {
+function onSketchEditRequested(res) { 
+    console.log(res)
+    const xhr = new XhrSender('PUT', 'protected/sketches', onSketchesUpdateResponse)
+    xhr.addParam('id', res.id);
+    xhr.addParam('name', res.name);
+    xhr.send();
+}
+
+function onSketchDeleteRequested(res) {
+    console.log(res)
     
 }
 
-function onSketchDeleteClicked() {
-    
+function onSketchCreateRequested(res) {
+    console.log(res)
+    const xhr = new XhrSender('POST', 'protected/sketches', onSketchesUpdateResponse)
+    xhr.addParam('folder_id', retrieveFolderId());
+    xhr.addParam('name', res.name);
+    xhr.send();
+}
+
+function onSketchesUpdateResponse() {
+    handleMessage(this.responseText);
+    navigateToFolderContent();
 }

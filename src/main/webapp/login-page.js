@@ -19,6 +19,7 @@ function onLoginResponse() {
     if (this.status === OK) {
         const user = JSON.parse(this.responseText);
         setAuthorization(user);
+        storeAdminMode(true);
         navigateToFoldersViewer();
     } else {
         onOtherResponse(loginContentDivEl, this);

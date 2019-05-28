@@ -24,7 +24,8 @@ function onFoldersResponse() {
 
     const foldersTable = gFolderItemList.create();
     foldersViewerEl.appendChild(foldersTable);
-    gFolderItemList.refreshWithNew(JSON.parse(this.response));
+    gFolderItemList.refreshWithNew(JSON.parse(this.responseText));
+    console.log(this.responseText);
 }
 
 function onFolderUpdateResponse() {

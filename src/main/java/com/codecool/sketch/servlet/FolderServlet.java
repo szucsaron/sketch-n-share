@@ -27,6 +27,7 @@ public class FolderServlet extends AbstractServlet {
         try (Connection connection = getConnection(getServletContext())) {
             FolderDao folderDao = new DatabaseFolderDao(connection);
             FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
+            folderService.validateAdminMode(fetchAdminMode(req));
             List<Folder> folders = folderService.fetchAll();
             sendMessage(resp, SC_OK, folders);
         } catch (SQLException | ServiceException e) {
@@ -42,6 +43,7 @@ public class FolderServlet extends AbstractServlet {
             FolderDao folderDao = new DatabaseFolderDao(connection);
             FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
             folderService.validateAdminMode(fetchAdminMode(req));
+            folderService.validateAdminMode(fetchAdminMode(req));
             folderService.createNew(name);
             sendMessage(resp, SC_OK, "New folder created");
 
@@ -56,9 +58,10 @@ public class FolderServlet extends AbstractServlet {
         try (Connection connection = getConnection(getServletContext())) {
             String folderId = req.getParameter("folder_id");
             String name = req.getParameter("name");
-
             FolderDao folderDao = new DatabaseFolderDao(connection);
             FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
+            folderService.validateAdminMode(fetchAdminMode(req));
+
             folderService.rename(folderId, name);
             sendMessage(resp, SC_OK, "Folder renamed");
         } catch (SQLException | ServiceException e) {
@@ -74,6 +77,7 @@ public class FolderServlet extends AbstractServlet {
 
             FolderDao folderDao = new DatabaseFolderDao(connection);
             FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
+            folderService.validateAdminMode(fetchAdminMode(req));
             folderService.delete(folderId);
             sendMessage(resp, SC_OK, "Folder deleted");
         } catch (SQLException | ServiceException e) {

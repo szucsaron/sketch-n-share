@@ -96,6 +96,45 @@ public class DatabaseSketchDao extends DatabaseAbstractDao implements SketchDao 
         }
     }
 
+    public void create(int userId, int folderId, String name) throws SQLException {
+        String sql = "SELECT \"create_sketch\" (?, ?, ?);";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, folderId);
+            preparedStatement.setString(3, name);
+            preparedStatement.execute();
+        }
+    }
+
+    public void create(int folderId, String name) throws SQLException {
+        String sql = "INSERT INTO sketches (folders_id, name) VALUES (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, folderId);
+            preparedStatement.setString(2, name);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public void rename(int userId, int id, String name) throws SQLException {
+        String sql = "SELECT \"rename_sketch\" (?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, id);
+            preparedStatement.setString(3, name);
+            preparedStatement.execute();
+        }
+    }
+
+    public void rename(int id, String name) throws SQLException {
+        String sql = "UPDATE sketches SET name = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+
     // Utility methods
 
     private Sketch executeSingle(PreparedStatement preparedStatement) throws SQLException {
@@ -134,4 +173,6 @@ public class DatabaseSketchDao extends DatabaseAbstractDao implements SketchDao 
 
         return new Sketch(id, foldersId, name, content);
     }
+
+
 }

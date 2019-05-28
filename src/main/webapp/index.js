@@ -93,7 +93,7 @@ function onLoad() {
         onProfileLoad(getAuthorization());
     }
     */
-    // storeAdminMode(true);
+    
 }
 
 class XhrSender {
@@ -109,6 +109,9 @@ class XhrSender {
     }
 
     send() {
+        if (hasAdminMode()) {
+            this.addParam('admin_mode', '1');
+        }
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', this.onResponse);
         xhr.addEventListener('error', onNetworkError);

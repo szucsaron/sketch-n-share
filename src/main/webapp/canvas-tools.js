@@ -115,6 +115,9 @@ function convertDrawObjectsToDto(drawObjects) {
 }
 
 function convertDtoToDrawObjects(dto) {
+    if (dto == null) {
+        return [];
+    }
     let drObjs = [];
     let idCount = 0;
     for (let i = 0; i < dto.lines.length; i++) {

@@ -15,7 +15,11 @@ public interface SketchService  extends AbstractService {
 
     Sketch fetchSketchById(String id) throws ServiceException, SQLException;
 
+    void create(String id, String name) throws ServiceException, SQLException;
+
     void update(String id, String folderId, String name, String content) throws ServiceException, SQLException;
+
+    void rename(String id, String name) throws ServiceException, SQLException;
 
 
 }
