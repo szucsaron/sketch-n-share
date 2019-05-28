@@ -39,14 +39,17 @@ public final class ImplUserService extends ImplAbstractService implements UserSe
     }
 
     public void shareFolderWithUser(String userName, String folderId) throws SQLException, ServiceException{
-
         User user = userDao.fetchByName(userName);
         if (user == null) {
             throw new ServiceException("User doesn't exist!");
         }
-        userDao.shareFolderWithUser(user.getId(), fetchInt(folderId, "folderId"));
-
+        userDao.shareFolderWithUser(fetchUserId(), user.getId(), fetchInt(folderId, "folderId"));
     }
+
+    public void unshareFolderWithUser(String userName, String folderId) throws SQLException, ServiceException {
+        
+    }
+
 
 
 }

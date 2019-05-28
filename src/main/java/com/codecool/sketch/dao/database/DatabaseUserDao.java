@@ -47,21 +47,25 @@ public class DatabaseUserDao extends DatabaseAbstractDao implements UserDao {
         }
     }
 
-    public void shareFolderWithUser(int userId, int folderId) throws SQLException {
-        String sql = "INSERT INTO shares (users_id, folders_id) VALUES (?, ?)";
+    public void shareFolderWithUser(int owner, int userId, int folderId) throws SQLException {
+        //         String sql = "INSERT INTO shares (users_id, folders_id) VALUES (?, ?)";
+        // -- params: owner, folder id, user id
+        String sql = "SELECT \"share_folder_with_user\"(?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(1, owner);
             preparedStatement.setInt(2, folderId);
-            preparedStatement.executeUpdate();
+            preparedStatement.setInt(3, userId);
+            preparedStatement.execute();
         }
     }
 
-    public void removeFolderShare(int userId, int folderId) throws SQLException {
-        String sql = "DELETE FROM shares WHERE users_id = ? AND folders_id = ?";
+
+    public void removeFolderShare(int owner, int userId, int folderId) throws SQLException {
+        String sql = "SELECT \" unshare_folder_with_user\" (?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, folderId);
-            preparedStatement.executeUpdate();
+            preparedStatement.execute();
         }
     }
 

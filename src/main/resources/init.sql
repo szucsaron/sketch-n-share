@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS unshare_folder_with_user;
+DROP FUNCTION IF EXISTS share_folder_with_user;
 DROP TABLE IF EXISTS shares;
 DROP TABLE IF EXISTS sketches;
 DROP TABLE IF EXISTS folders;
@@ -33,6 +35,35 @@ CREATE TABLE shares (
 );
 
 
+-- Functions
+
+--In the following functions owner is used as a user verification param
+
+-- Share a folder with user.
+-- params: owner, folder id, user id
+CREATE FUNCTION share_folder_with_user(int, int, int) RETURNS void 
+AS '
+	BEGIN
+		IF (SELECT COUNT(*) FROM folders WHERE owner = $1 AND id = $2) = 0 THEN
+			RAISE EXCEPTION ''Folders can only shared by their owners'';
+		END IF;
+		INSERT INTO shares (users_id, folders_id) VALUES ($3, $2);
+	END; '
+LANGUAGE plpgsql;
+
+
+-- Unshare a folder with user.
+-- params: owner, folder id, user id
+CREATE FUNCTION unshare_folder_with_user(int, int, int) RETURNS void 
+AS '
+	BEGIN
+		IF (SELECT COUNT(*) FROM folders WHERE owner = $1 AND id = $2) = 0 THEN
+			RAISE EXCEPTION ''Folders can only shared by their owners'';
+		END IF;
+		DELETE FROM shares WHERE users_id = $3 AND folders_id = $2;
+	END; '
+LANGUAGE plpgsql;
+
 -- Insert data
 
 INSERT INTO users (name, password, role) VALUES 
@@ -66,4 +97,6 @@ INSERT INTO shares (users_id, folders_id) VALUES
 (5, 2),
 (1, 3);
 
-SELECT * FROM sketches
+
+
+
