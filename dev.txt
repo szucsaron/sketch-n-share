@@ -1,5 +1,12 @@
-optional params for all methods:
-admin_mode: 1: request admin mode
+Servlet paths and restful methods
+    x marks completion
+
+    optional params for all methods:
+    admin_mode: 1: request admin mode
+
+    Note: id of current user is always extracted
+    from servlet context
+    (no need for params for that)
 
 /login
 	x POST: login a user:
@@ -24,6 +31,11 @@ admin_mode: 1: request admin mode
 		return: MessageDto
 
 /protected/folder_share
+    GET: get all folders shared with a user
+        params: -
+        return: List<Folder>
+
+/protected/folder_share_mgr
     x GET: get all shared users of a folder
         params: folder_id
         return: List<User>
@@ -34,12 +46,6 @@ admin_mode: 1: request admin mode
         params: folder_id, user_id
         return: MessageDto
 
-
-/protected/folder_share/with_me
-    GET: get all folders shared with user
-        params: user_id
-        return: List<Folder>
-		
 /protected/sketches
 	x GET: get all sketches in a folder as empty data containers
 		 (without content)
@@ -57,6 +63,12 @@ admin_mode: 1: request admin mode
 	DELETE: delete sketch
 		params: sketch_id
 		return: MessageDto
+
+/protected/sketches_shared
+	x GET: get all shared sketches in a folder as empty data containers
+		 (without content)
+		params: folder_id
+		return: List<EmptySketchData>
 		
 /protected/sketch
 	x GET: get a sketch:

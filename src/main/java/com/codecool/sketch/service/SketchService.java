@@ -13,6 +13,10 @@ public interface SketchService  extends AbstractService {
 
     List<EmptySketchData> fetchEmptiesByFolderId(String id) throws ServiceException, SQLException;
 
+    List<EmptySketchData> fetchSharedEmptiesByFolderId(String id) throws ServiceException, SQLException;
+
+
+
     Sketch fetchSketchById(String id) throws ServiceException, SQLException;
 
     void create(String id, String name) throws ServiceException, SQLException;

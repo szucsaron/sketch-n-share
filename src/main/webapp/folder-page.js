@@ -1,7 +1,11 @@
-function navigateToFolderContent() {
-    user = getAuthorization();
+function navigateToFolderContent(shared) {
     showContents('folder-page');
-    const xhr = new XhrSender('GET', 'protected/sketches', onFolderResponse);
+    let xhr;
+    if (shared) {
+        xhr = new XhrSender('GET', 'protected/sketches_shared', onSharedFolderResponse);
+    } else {
+        xhr = new XhrSender('GET', 'protected/sketches', onFolderResponse);
+    }
     xhr.addParam('folder_id', retrieveFolderId());
     xhr.send();
 }
@@ -21,6 +25,14 @@ function onFolderResponse() {
     gSketchItemList.setAsEditable(onSketchEditRequested);
     gSketchItemList.setAsCreatable(onSketchCreateRequested);
     gSketchItemList.setAsDeletable(onSketchDeleteRequested);
+    folderContentEl.appendChild(gSketchItemList.create());
+    gSketchItemList.refreshWithNew(JSON.parse(this.responseText));
+}
+
+function onSharedFolderResponse() {
+    const folderContentEl = document.getElementById('folder-page');
+    removeAllChildren(folderContentEl);
+    gSketchItemList = new ItemList('sketch-item-list', onSketchClicked);
     folderContentEl.appendChild(gSketchItemList.create());
     gSketchItemList.refreshWithNew(JSON.parse(this.responseText));
 }

@@ -42,9 +42,9 @@ CREATE TABLE shares (
 /*
 The following functions are used to simplify table insertions and updates where user verification
 would normally call for multiple SQL queries made by the db client. Using these functions requires
-only a single query, and everything else is taken care of here, at db level.
+only a single query, and everything else is taken care of at db level.
 In the params, 'owner' stands for the user id of the function caller needed to be verified.
-In case of illegal owners or bad arguments, the functions throw exceptions.
+In case of illegal owners, the functions throw exceptions.
 
 */
 
@@ -158,4 +158,5 @@ INSERT INTO sketches (name, folders_id, content) VALUES
 ) -- 3
 ;
 
-
+INSERT INTO shares (folders_id, users_id) VALUES 
+(1, 2);

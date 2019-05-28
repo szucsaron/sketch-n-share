@@ -27,6 +27,10 @@ public class ImplSketchServiceImpl extends ImplAbstractService implements Sketch
         }
     }
 
+    public List<EmptySketchData> fetchSharedEmptiesByFolderId(String id) throws ServiceException, SQLException {
+        return sketchDao.findBySharedFolderId(fetchUserId(), fetchInt(id, "id"));
+    }
+
     public Sketch fetchSketchById(String id) throws ServiceException, SQLException {
         int idVal = fetchInt(id, "id");
 

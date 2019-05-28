@@ -67,7 +67,10 @@
         </form>
     </div>
     <div id="folders-page" class="hidden page">
-        These are folders
+        My folders
+        <div id="owner-folders"></div>
+        Folders shared with me:
+        <div id="shared-folders"></div>
     </div>
     <div id="folder-page" class="hidden page">
             This is a folder

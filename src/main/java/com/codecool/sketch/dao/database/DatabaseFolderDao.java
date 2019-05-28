@@ -24,6 +24,18 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
         }
     }
 
+    public List<Folder> fetchAllShared(int userId) throws SQLException {
+        String sql = "SELECT folders.* FROM folders\n" +
+                "LEFT JOIN shares ON folders.id = folders_id\n" +
+                "WHERE users_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.execute();
+            return executeMultipleFetch(preparedStatement);
+        }
+    }
+
+
     public List<Folder> fetchAll() throws SQLException {
         String sql = "SELECT folders.*, users.name AS owner_name FROM folders\n" +
                 "LEFT JOIN users ON users.id = folders.owner";

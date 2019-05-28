@@ -9,9 +9,12 @@ import java.util.List;
 public interface FolderService extends AbstractService {
     List<Folder> fetchAll() throws ServiceException, SQLException;
 
+    List<Folder> fetchAllShared() throws ServiceException, SQLException;
+
     void createNew(String name) throws ServiceException, SQLException;
 
     void rename(String folderId, String name) throws ServiceException, SQLException;
 
     void delete(String folderId) throws ServiceException, SQLException;
+
 }

@@ -1,8 +1,13 @@
 function navigateToFoldersViewer() {
     user = getAuthorization();
     showContents('folders-page')
-    const xhr = new XhrSender('GET', 'protected/folder', onFoldersResponse);
-    xhr.send()
+    
+    const ownerXhr = new XhrSender('GET', 'protected/folder', onOwnerFoldersResponse);
+    ownerXhr.send();
+    
+    const sharedXhr = new XhrSender('GET', 'protected/folder_share', onSharedFoldersResponse);
+    sharedXhr.send();
+    
 }
 
 function storeUserFolders(userFolders) {
@@ -14,7 +19,11 @@ function retrieveUserFolders() {
 }
 
 function onFoldersResponse() {
-    const foldersViewerEl = document.getElementById('folders-page');
+    
+}
+
+function onOwnerFoldersResponse() {
+    const foldersViewerEl = document.getElementById('owner-folders');
     removeAllChildren(foldersViewerEl);
     gFolderItemList = new ItemList('folders-table', onFolderClicked);
     gFolderItemList.setAsEditable(onFolderEditRequested);
@@ -25,7 +34,20 @@ function onFoldersResponse() {
     const foldersTable = gFolderItemList.create();
     foldersViewerEl.appendChild(foldersTable);
     gFolderItemList.refreshWithNew(JSON.parse(this.responseText));
+    
+}
+
+
+
+function onSharedFoldersResponse() {
     console.log(this.responseText);
+    const foldersViewerEl = document.getElementById('shared-folders');
+    removeAllChildren(foldersViewerEl);
+    gFolderItemList = new ItemList('shared-folders-table', onSharedFolderClicked);
+
+    const foldersTable = gFolderItemList.create();
+    foldersViewerEl.appendChild(foldersTable);
+    gFolderItemList.refreshWithNew(JSON.parse(this.responseText));
 }
 
 function onFolderUpdateResponse() {
@@ -38,6 +60,11 @@ function onFolderUpdateResponse() {
 function onFolderClicked() {
     storeFolderId(this.getAttribute('item_id'));
     navigateToFolderContent();
+}
+
+function onSharedFolderClicked() {
+    storeFolderId(this.getAttribute('item_id'));
+    navigateToFolderContent(true);
 }
 
 // Create new

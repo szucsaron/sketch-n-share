@@ -25,6 +25,11 @@ public class ImplFolderServiceImpl extends ImplAbstractService implements Folder
         }
     }
 
+    public List<Folder> fetchAllShared() throws ServiceException, SQLException {
+        return folderDao.fetchAllShared(fetchUserId());
+    }
+
+
     public void createNew(String name) throws ServiceException, SQLException {
         folderDao.createNew(name, fetchUserId());
     }

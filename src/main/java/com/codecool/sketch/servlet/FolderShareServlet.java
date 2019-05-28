@@ -1,14 +1,11 @@
 package com.codecool.sketch.servlet;
 
-
-import com.codecool.sketch.dao.UserDao;
-import com.codecool.sketch.dao.database.DatabaseUserDao;
-import com.codecool.sketch.model.User;
-import com.codecool.sketch.service.LoginService;
-import com.codecool.sketch.service.UserService;
+import com.codecool.sketch.dao.FolderDao;
+import com.codecool.sketch.dao.database.DatabaseFolderDao;
+import com.codecool.sketch.model.Folder;
+import com.codecool.sketch.service.FolderService;
 import com.codecool.sketch.service.exception.ServiceException;
-import com.codecool.sketch.service.impl.ImplLoginService;
-import com.codecool.sketch.service.impl.ImplUserService;
+import com.codecool.sketch.service.impl.ImplFolderServiceImpl;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,68 +15,23 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+
 @WebServlet("/protected/folder_share")
-public class FolderShareServlet extends AbstractServlet{
+public class FolderShareServlet extends AbstractServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try (Connection connection = getConnection(req.getServletContext())) {
-
-            UserDao userDao = new DatabaseUserDao(connection);
-            UserService userService = new ImplUserService(fetchUser(req), userDao);
-
-            String folderId = req.getParameter("folder_id");
-            List<User> sharedUsers = userService.fetchBySharedFolder(folderId);
-
-            sendMessage(resp, HttpServletResponse.SC_OK, sharedUsers);
-
-
-        } catch (ServiceException ex) {
-            sendMessage(resp, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
-        } catch (SQLException ex) {
-            handleError(resp, ex);
+        // List all shared folders of a user
+        try (Connection connection = getConnection(getServletContext())) {
+            FolderDao folderDao = new DatabaseFolderDao(connection);
+            FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
+            folderService.validateAdminMode(fetchAdminMode(req));
+            List<Folder> folders = folderService.fetchAllShared();
+            sendMessage(resp, SC_OK, folders);
+        } catch (SQLException | ServiceException e) {
+            handleError(resp, e);
         }
     }
-
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try (Connection connection = getConnection(req.getServletContext())) {
-
-            UserDao userDao = new DatabaseUserDao(connection);
-            UserService userService = new ImplUserService(fetchUser(req), userDao);
-
-            String folderId = req.getParameter("folder_id");
-            String userName = req.getParameter("user_name");
-            userService.shareFolderWithUser(userName, folderId);
-
-            sendMessage(resp, HttpServletResponse.SC_OK, "Folder shared");
-
-
-        } catch (ServiceException ex) {
-            sendMessage(resp, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
-        } catch (SQLException ex) {
-            handleError(resp, ex);
-        }
-    }
-
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try (Connection connection = getConnection(req.getServletContext())) {
-
-            UserDao userDao = new DatabaseUserDao(connection);
-            UserService userService = new ImplUserService(fetchUser(req), userDao);
-
-            String folderId = req.getParameter("folder_id");
-            String user_id = req.getParameter("user_id");
-            userService.unshareFolderWithUser(user_id, folderId);
-
-            sendMessage(resp, HttpServletResponse.SC_OK, "Folder unshared");
-
-
-        } catch (ServiceException ex) {
-            sendMessage(resp, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
-        } catch (SQLException ex) {
-            handleError(resp, ex);
-        }
-    }
-
 
 }

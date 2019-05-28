@@ -10,6 +10,8 @@ public interface FolderDao {
 
     List<Folder> fetchAll() throws SQLException;
 
+    List<Folder> fetchAllShared(int userId) throws SQLException;
+
     void createNew(String name, int userId) throws SQLException;
 
     void rename(int userId, int folderId, String name) throws SQLException;
