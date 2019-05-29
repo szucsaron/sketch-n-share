@@ -8,6 +8,7 @@ let gFolderItemList = null;
 let gFolderShareItemList = null;
 let gSketchItemList = null;
 let gCanvas = null;
+let gShareMode = false;
 
 
 
@@ -66,6 +67,14 @@ function hasAdminMode() {
         return false;
     }
     return adminMode;
+}
+
+function storeShareMode(isShareModeOn) {
+    gShareMode = isShareModeOn
+}
+
+function hasShareMode() {
+    return gShareMode
 }
 
 function storeItem(name, value) {

@@ -6,7 +6,7 @@ Servlet paths and restful methods
 
     Note: id of current user is always extracted
     from servlet context
-    (no need for params for that)
+    (no need to send params for that)
 
 /login
 	x POST: login a user:
@@ -23,15 +23,12 @@ Servlet paths and restful methods
 	x PUT: Rename folder
 		params: folder_id, name
 		return: MessageDto
-	PATCH: Change folder ownership (Only available for admin)
-	    params: folder_id, owner
-	    return: MessageDto
 	x DELETE: Delete folder
 		params: folder_d
 		return: MessageDto
 
 /protected/folder_share
-    GET: get all folders shared with a user
+    x GET: get all folders shared with a user
         params: -
         return: List<Folder>
 
@@ -57,9 +54,6 @@ Servlet paths and restful methods
 	x PUT: rename sketch
 		params: id, name
 		return: MessageDto
-	PATCH: move sketch to different folder
-		params: sketch_id, folder_id
-		return MessageDto
 	DELETE: delete sketch
 		params: sketch_id
 		return: MessageDto

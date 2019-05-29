@@ -27,7 +27,7 @@ public class SketchSharedServlet extends AbstractServlet {
             SketchDao sketchDao = new DatabaseSketchDao(connection);
             SketchService sketchService = new ImplSketchService(fetchUser(req), sketchDao);
             sketchService.validateAdminMode(fetchAdminMode(req));
-            Sketch sketch = sketchService.fetchById(sketchId);
+            Sketch sketch = sketchService.fetchSharedById(sketchId);
             sendMessage(resp, SC_OK, sketch);
         } catch (SQLException | ServiceException e) {
             handleError(resp, e);

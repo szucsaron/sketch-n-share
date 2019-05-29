@@ -1,7 +1,7 @@
-function navigateToFolderContent(shared) {
+function navigateToFolderContent() {
     showContents('folder-page');
     let xhr;
-    if (shared) {
+    if (hasShareMode()) {
         xhr = new XhrSender('GET', 'protected/sketches_shared', onSharedFolderResponse);
     } else {
         xhr = new XhrSender('GET', 'protected/sketches', onFolderResponse);
@@ -32,7 +32,7 @@ function onFolderResponse() {
 function onSharedFolderResponse() {
     const folderContentEl = document.getElementById('folder-page');
     removeAllChildren(folderContentEl);
-    gSketchItemList = new ItemList('sketch-item-list', onSharedSketchClicked);
+    gSketchItemList = new ItemList('sketch-item-list', onSketchClicked);
     folderContentEl.appendChild(gSketchItemList.create());
     gSketchItemList.refreshWithNew(JSON.parse(this.responseText));
 }
@@ -40,11 +40,6 @@ function onSharedFolderResponse() {
 function onSketchClicked() {
     storeSketchId(this.getAttribute("item_id"));
     navigateToCanvas()
-}
-
-function onSharedSketchClicked() {
-    storeSketchId(this.getAttribute("item_id"));
-    navigateToCanvas(true)
 }
 
 function onSketchEditRequested(res) { 

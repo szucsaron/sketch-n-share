@@ -59,12 +59,14 @@ function onFolderUpdateResponse() {
 
 function onFolderClicked() {
     storeFolderId(this.getAttribute('item_id'));
+    storeShareMode(false);
     navigateToFolderContent();
 }
 
 function onSharedFolderClicked() {
     storeFolderId(this.getAttribute('item_id'));
-    navigateToFolderContent(true);
+    storeShareMode(true);
+    navigateToFolderContent();
 }
 
 // Create new

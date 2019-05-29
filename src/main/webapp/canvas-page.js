@@ -6,7 +6,12 @@
 function navigateToCanvas() {
     user = getAuthorization();
     showContents("canvas-page")
-    const xhr = new XhrSender('GET', 'protected/sketch', onCanvasResponse);
+    let xhr;
+    if (hasShareMode()) {
+        xhr = new XhrSender('GET', 'protected/sketch_shared', onCanvasResponse);
+    } else {
+        xhr = new XhrSender('GET', 'protected/sketch', onCanvasResponse);
+    }
     xhr.addParam('sketch_id', retrieveSketchId());
     xhr.send();
 }
