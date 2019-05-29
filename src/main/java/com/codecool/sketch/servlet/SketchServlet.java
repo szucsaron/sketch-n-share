@@ -5,7 +5,7 @@ import com.codecool.sketch.dao.database.DatabaseSketchDao;
 import com.codecool.sketch.model.Sketch;
 import com.codecool.sketch.service.SketchService;
 import com.codecool.sketch.service.exception.ServiceException;
-import com.codecool.sketch.service.impl.ImplSketchServiceImpl;
+import com.codecool.sketch.service.impl.ImplSketchService;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,9 +25,9 @@ public class SketchServlet extends AbstractServlet {
         try (Connection connection = getConnection(getServletContext())) {
             String sketchId = req.getParameter("sketch_id");
             SketchDao sketchDao = new DatabaseSketchDao(connection);
-            SketchService sketchService = new ImplSketchServiceImpl(fetchUser(req), sketchDao);
+            SketchService sketchService = new ImplSketchService(fetchUser(req), sketchDao);
             sketchService.validateAdminMode(fetchAdminMode(req));
-            Sketch sketch = sketchService.fetchSketchById(sketchId);
+            Sketch sketch = sketchService.fetchById(sketchId);
             sendMessage(resp, SC_OK, sketch);
         } catch (SQLException | ServiceException e) {
             handleError(resp, e);
@@ -44,7 +44,7 @@ public class SketchServlet extends AbstractServlet {
             String content = req.getParameter("content");
 
             SketchDao sketchDao = new DatabaseSketchDao(connection);
-            SketchService sketchService = new ImplSketchServiceImpl(fetchUser(req), sketchDao);
+            SketchService sketchService = new ImplSketchService(fetchUser(req), sketchDao);
             sketchService.validateAdminMode(fetchAdminMode(req));
             sketchService.update(sketchId, folderId, name, content);
 

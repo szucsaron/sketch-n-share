@@ -18,6 +18,8 @@ public interface SketchDao {
 
     Sketch findById(int id) throws SQLException;
 
+    Sketch findSharedById(int userId, int id) throws SQLException;
+
     void update(int userId, int id, int folderId, String name, String content) throws SQLException;
 
     void update(int id, int folderId, String name, String content) throws SQLException;

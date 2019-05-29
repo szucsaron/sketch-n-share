@@ -4,9 +4,8 @@ import com.codecool.sketch.dao.FolderDao;
 import com.codecool.sketch.dao.database.DatabaseFolderDao;
 import com.codecool.sketch.model.Folder;
 import com.codecool.sketch.service.FolderService;
-import com.codecool.sketch.service.UserService;
 import com.codecool.sketch.service.exception.ServiceException;
-import com.codecool.sketch.service.impl.ImplFolderServiceImpl;
+import com.codecool.sketch.service.impl.ImplFolderService;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +25,7 @@ public class FolderServlet extends AbstractServlet {
         // List all folders of a user
         try (Connection connection = getConnection(getServletContext())) {
             FolderDao folderDao = new DatabaseFolderDao(connection);
-            FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
+            FolderService folderService = new ImplFolderService(fetchUser(req), folderDao);
             folderService.validateAdminMode(fetchAdminMode(req));
             List<Folder> folders = folderService.fetchAll();
             sendMessage(resp, SC_OK, folders);
@@ -41,7 +40,7 @@ public class FolderServlet extends AbstractServlet {
         try (Connection connection = getConnection(getServletContext())) {
             String name = req.getParameter("name");
             FolderDao folderDao = new DatabaseFolderDao(connection);
-            FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
+            FolderService folderService = new ImplFolderService(fetchUser(req), folderDao);
             folderService.validateAdminMode(fetchAdminMode(req));
             folderService.validateAdminMode(fetchAdminMode(req));
             folderService.createNew(name);
@@ -59,7 +58,7 @@ public class FolderServlet extends AbstractServlet {
             String folderId = req.getParameter("folder_id");
             String name = req.getParameter("name");
             FolderDao folderDao = new DatabaseFolderDao(connection);
-            FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
+            FolderService folderService = new ImplFolderService(fetchUser(req), folderDao);
             folderService.validateAdminMode(fetchAdminMode(req));
 
             folderService.rename(folderId, name);
@@ -76,7 +75,7 @@ public class FolderServlet extends AbstractServlet {
             String folderId = req.getParameter("folder_id");
 
             FolderDao folderDao = new DatabaseFolderDao(connection);
-            FolderService folderService = new ImplFolderServiceImpl(fetchUser(req), folderDao);
+            FolderService folderService = new ImplFolderService(fetchUser(req), folderDao);
             folderService.validateAdminMode(fetchAdminMode(req));
             folderService.delete(folderId);
             sendMessage(resp, SC_OK, "Folder deleted");

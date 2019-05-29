@@ -70,6 +70,18 @@ public class DatabaseSketchDao extends DatabaseAbstractDao implements SketchDao 
         }
     }
 
+    public Sketch findSharedById(int userId, int id) throws SQLException {
+        String sql = "SELECT sketches.* FROM sketches\n" +
+                "LEFT JOIN folders ON sketches.folders_id = folders.id\n" +
+                "RIGHT JOIN shares ON folders.id = shares.folders_id\n" +
+                "WHERE shares.users_id = ?  AND sketches.id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, id);
+            return executeSingle(preparedStatement);
+        }
+    }
+
     public void update(int userId, int id, int folderId, String name, String content) throws SQLException {
         String sql = "SELECT \"update_sketch\" (?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {

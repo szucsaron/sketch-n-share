@@ -5,7 +5,7 @@ import com.codecool.sketch.dao.database.DatabaseSketchDao;
 import com.codecool.sketch.model.EmptySketchData;
 import com.codecool.sketch.service.SketchService;
 import com.codecool.sketch.service.exception.ServiceException;
-import com.codecool.sketch.service.impl.ImplSketchServiceImpl;
+import com.codecool.sketch.service.impl.ImplSketchService;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +26,7 @@ public class SketchesServlet extends AbstractServlet {
         try (Connection connection = getConnection(getServletContext())) {
             String folderId = req.getParameter("folder_id");
             SketchDao sketchDao = new DatabaseSketchDao(connection);
-            SketchService sketchService = new ImplSketchServiceImpl(fetchUser(req), sketchDao);
+            SketchService sketchService = new ImplSketchService(fetchUser(req), sketchDao);
             sketchService.validateAdminMode(fetchAdminMode(req));
             List<EmptySketchData> emptySketchData = sketchService.fetchEmptiesByFolderId(folderId);
             sendMessage(resp, SC_OK, emptySketchData);
@@ -41,7 +41,7 @@ public class SketchesServlet extends AbstractServlet {
         try (Connection connection = getConnection(getServletContext())) {
 
             SketchDao sketchDao = new DatabaseSketchDao(connection);
-            SketchService sketchService = new ImplSketchServiceImpl(fetchUser(req), sketchDao);
+            SketchService sketchService = new ImplSketchService(fetchUser(req), sketchDao);
             sketchService.validateAdminMode(fetchAdminMode(req));
             String folderId = req.getParameter("folder_id");
             String sketchName = req.getParameter("name");
@@ -58,7 +58,7 @@ public class SketchesServlet extends AbstractServlet {
         // Rename sketch
         try (Connection connection = getConnection(getServletContext())) {
             SketchDao sketchDao = new DatabaseSketchDao(connection);
-            SketchService sketchService = new ImplSketchServiceImpl(fetchUser(req), sketchDao);
+            SketchService sketchService = new ImplSketchService(fetchUser(req), sketchDao);
             sketchService.validateAdminMode(fetchAdminMode(req));
             String id = req.getParameter("id");
             String name = req.getParameter("name");

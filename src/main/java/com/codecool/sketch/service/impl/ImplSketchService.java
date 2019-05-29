@@ -10,10 +10,10 @@ import com.codecool.sketch.service.exception.ServiceException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ImplSketchServiceImpl extends ImplAbstractService implements SketchService {
+public class ImplSketchService extends ImplAbstractService implements SketchService {
     private SketchDao sketchDao;
 
-    public ImplSketchServiceImpl(User user, SketchDao sketchDao) {
+    public ImplSketchService(User user, SketchDao sketchDao) {
         super(user);
         this.sketchDao = sketchDao;
     }
@@ -31,7 +31,7 @@ public class ImplSketchServiceImpl extends ImplAbstractService implements Sketch
         return sketchDao.findBySharedFolderId(fetchUserId(), fetchInt(id, "id"));
     }
 
-    public Sketch fetchSketchById(String id) throws ServiceException, SQLException {
+    public Sketch fetchById(String id) throws ServiceException, SQLException {
         int idVal = fetchInt(id, "id");
 
         if (adminMode) {
@@ -39,6 +39,10 @@ public class ImplSketchServiceImpl extends ImplAbstractService implements Sketch
         } else {
             return sketchDao.findById(fetchUserId(), idVal);
         }
+    }
+
+    public Sketch fetchSharedById(String id) throws ServiceException, SQLException{
+        return sketchDao.findSharedById(fetchUserId(), fetchInt(id, "id"));
     }
 
     public void update(String id, String folderId, String name, String content) throws ServiceException, SQLException {

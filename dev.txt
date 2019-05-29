@@ -77,3 +77,8 @@ Servlet paths and restful methods
 	x POST: modify sketch
 		params: sketch_id, folder_id, userName, content
 		return: MessageDto
+
+/protected/sketch_shared
+    x GET: get a shared sketch:
+        params: sketch_id
+        return: Sketch
