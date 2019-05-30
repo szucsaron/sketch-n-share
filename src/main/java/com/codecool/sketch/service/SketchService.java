@@ -25,5 +25,6 @@ public interface SketchService  extends AbstractService {
 
     void rename(String id, String name) throws ServiceException, SQLException;
 
+    void delete(String id) throws ServiceException, SQLException;
 
 }

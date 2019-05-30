@@ -2,10 +2,7 @@ package com.codecool.sketch.servlet;
 
 import com.codecool.sketch.dto.MessageDto;
 import com.codecool.sketch.model.User;
-import com.codecool.sketch.service.AbstractService;
-import com.codecool.sketch.service.SketchService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
@@ -36,7 +33,7 @@ abstract class AbstractServlet extends HttpServlet {
     }
 
     protected void handleError(HttpServletResponse resp, Exception ex) throws IOException {
-        sendMessage(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
+        sendMessage(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
         ex.printStackTrace();
     }
 

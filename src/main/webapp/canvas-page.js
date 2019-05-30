@@ -5,7 +5,6 @@
 
 function navigateToCanvas() {
     user = getAuthorization();
-    showContents("canvas-page")
     let xhr;
     if (hasShareMode()) {
         xhr = new XhrSender('GET', 'protected/sketch_shared', onCanvasResponse);
@@ -37,7 +36,7 @@ function retrieveSketchHeader() {
 }
 
 function onCanvasResponse() {
-
+    handlePageTransition("canvas-page");
     const shapeCreator = new ShapeCreator();
     gCanvas = new Canvas(shapeCreator, document.getElementById('canvas-page'), document.getElementById('canvas'));
 
@@ -45,6 +44,10 @@ function onCanvasResponse() {
     storeSketchHeader(data.id, data.name, data.folderId);
     const content = JSON.parse(data.content);
     gCanvas.loadDrawObjects(convertDtoToDrawObjects(content));
+    gCanvas.addDrawButton(document.getElementById('canvas-drawmode-draw'));
+    gCanvas.addDeleteButton(document.getElementById('canvas-drawmode-delete'));
+    gCanvas.addMessageHandler(handleTextMessage);
+
     console.log(content);
     gCanvas.refresh()
 }

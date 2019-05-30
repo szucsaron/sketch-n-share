@@ -1,6 +1,5 @@
 function navigateToFoldersViewer() {
     user = getAuthorization();
-    showContents('folders-page')
     
     const ownerXhr = new XhrSender('GET', 'protected/folder', onOwnerFoldersResponse);
     ownerXhr.send();
@@ -23,6 +22,7 @@ function onFoldersResponse() {
 }
 
 function onOwnerFoldersResponse() {
+    handlePageTransition('folders-page');
     const foldersViewerEl = document.getElementById('owner-folders');
     removeAllChildren(foldersViewerEl);
     gFolderItemList = new ItemList('folders-table', onFolderClicked);
@@ -40,6 +40,7 @@ function onOwnerFoldersResponse() {
 
 
 function onSharedFoldersResponse() {
+    handlePageTransition('folders-page');
     console.log(this.responseText);
     const foldersViewerEl = document.getElementById('shared-folders');
     removeAllChildren(foldersViewerEl);

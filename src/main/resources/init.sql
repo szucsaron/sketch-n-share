@@ -1,15 +1,19 @@
+-- FUNCTION AND TABLE DROP
+
+DROP FUNCTION IF EXISTS delete_sketch;
 DROP FUNCTION IF EXISTS rename_sketch;
 DROP FUNCTION IF EXISTS create_sketch;
 DROP FUNCTION IF EXISTS update_sketch;
 DROP FUNCTION IF EXISTS unshare_folder_with_user;
 DROP FUNCTION IF EXISTS share_folder_with_user;
+
 DROP TABLE IF EXISTS shares;
 DROP TABLE IF EXISTS sketches;
 DROP TABLE IF EXISTS folders;
 DROP TABLE IF EXISTS users;
 
 
--- Create tables
+-- TABLES
 
 CREATE TABLE users (
 	id SERIAL PRIMARY KEY,
@@ -38,11 +42,11 @@ CREATE TABLE shares (
 );
 
 
--- Functions
+-- QUERY FUNCTIONS
 /*
 The following functions are used to simplify table insertions and updates where user verification
 would normally call for multiple SQL queries made by the db client. Using these functions requires
-only a single query, and everything else is taken care of at db level.
+only a single query, and everything else is taken care of at db level. 
 In the params, 'owner' stands for the user id of the function caller needed to be verified.
 In case of illegal owners, the functions throw exceptions.
 
@@ -66,8 +70,7 @@ AS '
 	END; '
 LANGUAGE plpgsql;
 
-
--- Unshare a folder with user.
+-- Unshare an existing shared folder with a user
 -- params: owner, folder id, user id
 CREATE FUNCTION unshare_folder_with_user(int, int, int) RETURNS void 
 AS '
@@ -79,8 +82,7 @@ AS '
 	END; '
 LANGUAGE plpgsql;
 
-
--- Update a sketch
+-- Change every data of a sketch. Should be used when saving an edited sketch.
 -- params: 1 owner, 2 id, 3 folderId, 4 name, 5 content
 CREATE FUNCTION update_sketch(int, int, int, text, text) RETURNS void
 AS 
@@ -88,7 +90,7 @@ AS
 	BEGIN
 		IF (SELECT users.id FROM users LEFT JOIN folders ON users.id = owner
 			WHERE folders.id = $3) != $1 THEN
-			RAISE EXCEPTION ''Sketches can be only updated by the owners of their folders'';
+			RAISE EXCEPTION ''Sketches can only be updated by the owners of their folders'';
 		END IF;
 		UPDATE sketches SET folders_id = $3, name = $4, content = $5 WHERE id = $2;
 	END;
@@ -96,22 +98,20 @@ AS
 '
 LANGUAGE plpgsql;
 
-
--- Create new sketch
+-- Create a new empty sketch without content.
 -- params: owner, folder_id, name
 CREATE FUNCTION create_sketch(int, int, text) RETURNS void
 AS 
 ' 
 	BEGIN
 		IF (SELECT owner FROM folders WHERE id = $2) != $1 THEN
-			RAISE EXCEPTION ''Sketches can be only created by the owners of their folders'';
+			RAISE EXCEPTION ''Sketches can only be created by the owners of their folders'';
 		END IF;
 		INSERT INTO sketches (folders_id, name) VALUES ($2, $3);
 	END;
 
 '
 LANGUAGE plpgsql;
-
 
 -- Rename existing sketch
 -- params: owner, sketch_id, name
@@ -122,7 +122,7 @@ AS
 		IF (SELECT owner FROM folders
 			RIGHT JOIN sketches ON folders.id = folders_id
 			WHERE sketches.id = $2) != $1 THEN
-			RAISE EXCEPTION ''Sketches can be only renamed by the owners of their folders'';
+			RAISE EXCEPTION ''Sketches can only be renamed by the owners of their folders'';
 		END IF;
 		UPDATE sketches SET name = $3 WHERE id = $2;
 	END;
@@ -130,8 +130,35 @@ AS
 '
 LANGUAGE plpgsql;
 
+-- Delete an existing sketch
+-- params: owner, sketch_id
+CREATE FUNCTION delete_sketch(int, int) RETURNS void
+AS 
+' 
+	BEGIN
+		IF (SELECT owner FROM folders
+			RIGHT JOIN sketches ON folders.id = folders_id
+			WHERE sketches.id = $2) != $1 THEN
+			RAISE EXCEPTION ''Sketches can only be deleted by the owners of their folders'';
+		END IF;
+		DELETE FROM sketches WHERE id = $2;
+	END;
 
--- Insert data
+'
+LANGUAGE plpgsql;
+
+
+-- TRIGGER FUNCTIONS
+/*
+ * Work in progress
+ */
+-- validate_folder_insertion(...): should check for name uniqueness among folders of owner user
+-- validate_folder_update(...): should check for name uniqueness among folders of owner user
+-- validate_sketch_insertion(...): should check for name uniqueness in containing folder
+-- validate_sketch_update(...): should check for name uniqueness in containing folder
+
+
+-- STOCK DATA INSERTION
 
 INSERT INTO users (name, password, role) VALUES 
 ('a', 'a', '1'), --1
@@ -160,3 +187,4 @@ INSERT INTO sketches (name, folders_id, content) VALUES
 
 INSERT INTO shares (folders_id, users_id) VALUES 
 (1, 2);
+

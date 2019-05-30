@@ -158,6 +158,22 @@ public class DatabaseSketchDao extends DatabaseAbstractDao implements SketchDao 
         }
     }
 
+    public void delete(int userId, int id) throws SQLException {
+        String sql = "SELECT \"delete_sketch\" (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, id);
+            preparedStatement.execute();
+        }
+    }
+
+    public void delete(int id) throws SQLException {
+        String sql = "DELETE FROM sketches WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        }
+    }
 
     // Utility methods
 

@@ -97,3 +97,8 @@ img {
     position:relative;
     z-index:100;
 }
+
+#message-bar {
+    bottom: 0%;
+    color:blue;
+}

@@ -69,4 +69,19 @@ public class SketchesServlet extends AbstractServlet {
             handleError(resp, e);
         }
     }
+
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // Delete sketch
+        try (Connection connection = getConnection(getServletContext())) {
+            SketchDao sketchDao = new DatabaseSketchDao(connection);
+            SketchService sketchService = new ImplSketchService(fetchUser(req), sketchDao);
+            sketchService.validateAdminMode(fetchAdminMode(req));
+            String id = req.getParameter("id");
+            sketchService.delete(id);
+
+            sendMessage(resp, SC_OK, "Sketch deleted");
+        } catch (SQLException | ServiceException e) {
+            handleError(resp, e);
+        }
+    }
 }

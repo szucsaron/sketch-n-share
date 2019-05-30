@@ -35,10 +35,16 @@
     <link rel="stylesheet" type="text/css" href="${styleUrl}">
 </head>
 <body>
+    <div id="navbar" >
+        <button id="logout-button">Logout</button>
+    </div>
+    <div id="message-bar"></div>
     <div id="canvas-page" class="hidden page">
         <div id="canvas-toolbar">
             <button id="canvas-save">Save</button>
             <button id="canvas-back">Back</button>
+            <button id="canvas-drawmode-draw">Draw</button>
+            <button id="canvas-drawmode-delete">Delete</button>
         </div>
         <div id="canvas">
         </div>
@@ -73,14 +79,17 @@
         <div id="shared-folders"></div>
     </div>
     <div id="folder-page" class="hidden page">
-            This is a folder
+        Sketches in folder
+        <div id ="folder-page-content"></div>
+        <button id="folder-back">Back</button>
     </div>
     <div id="folder-share-page" class="hidden page">
-        Shares of folder ...
+        Users with shares
+        <div id ="folder-share-page-content"></div>
+        <button id="folder-share-back">Back</button>
+
     </div>
     
-    <div id="navbar" >
-        <button id="logout-button">Logout</button>
-    </div>
+    
 </body>
 </html>

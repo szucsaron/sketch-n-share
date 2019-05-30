@@ -22,7 +22,7 @@ function onLoginResponse() {
         // storeAdminMode(true);
         navigateToFoldersViewer();
     } else {
-        onOtherResponse(loginContentDivEl, this);
+        handleError(this.JSON)
     }
 }
 

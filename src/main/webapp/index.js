@@ -9,6 +9,7 @@ let gFolderShareItemList = null;
 let gSketchItemList = null;
 let gCanvas = null;
 let gShareMode = false;
+let gLastPageId = '';
 
 
 
@@ -25,7 +26,23 @@ function showContents(ids) {
 }
 
 function handleMessage(resp) {
-    alert(JSON.parse(resp).message);
+    handleTextMessage(JSON.parse(resp).message);
+}
+
+function handleTextMessage(txt) {
+    document.getElementById('message-bar').textContent = txt;
+}
+
+function clearMessageBar() {
+    document.getElementById('message-bar').textContent = '';
+}
+
+function handlePageTransition(pageElementId) {
+    showContents(pageElementId);
+    if (pageElementId != gLastPageId) {
+        clearMessageBar();
+    }
+    gLastPageId = pageElementId;
 }
 
 function removeAllChildren(el) {
@@ -96,6 +113,12 @@ function onLoad() {
     canvasBackButton.addEventListener('click', onCanvasBackButtonClicked);
 
     document.getElementById('canvas-save').addEventListener('click', onCanvasSaveClick);
+
+    const folderBackEl = document.getElementById('folder-back');
+    folderBackEl.addEventListener('click', onFolderBackClicked);
+
+    const folderShareBackEl = document.getElementById('folder-share-back');
+    folderShareBackEl.addEventListener('click', onFolderShareBackClicked);
     
     /*
     if (hasAuthorization()) {
@@ -168,6 +191,15 @@ function createItemList(id, items, onItemClicked, onItemEditclicked, onItemDelet
         tabEl.appendChild(trEl);
     }
     return tabEl;
+}
+
+function getClickEventTarget(res) {
+    const el = res.originalTarget;
+    if (el == undefined) {
+        return res.srcElement;
+    } else {
+        return el;
+    }
 }
 
 

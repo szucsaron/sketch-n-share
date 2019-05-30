@@ -3,6 +3,7 @@ Servlet paths and restful methods
 
     optional params for all methods:
     admin_mode: 1: request admin mode
+        (granted to users with ADMIN role)
 
     Note: id of current user is always extracted
     from servlet context
@@ -54,8 +55,8 @@ Servlet paths and restful methods
 	x PUT: rename sketch
 		params: id, name
 		return: MessageDto
-	DELETE: delete sketch
-		params: sketch_id
+	x DELETE: delete sketch
+		params: id
 		return: MessageDto
 
 /protected/sketches_shared

@@ -41,7 +41,7 @@ public class ImplSketchService extends ImplAbstractService implements SketchServ
         }
     }
 
-    public Sketch fetchSharedById(String id) throws ServiceException, SQLException{
+    public Sketch fetchSharedById(String id) throws ServiceException, SQLException {
         return sketchDao.findSharedById(fetchUserId(), fetchInt(id, "id"));
     }
 
@@ -72,6 +72,15 @@ public class ImplSketchService extends ImplAbstractService implements SketchServ
             sketchDao.rename(idVal, name);
         } else {
             sketchDao.rename(fetchUserId(), idVal, name);
+        }
+    }
+
+    public void delete(String id) throws ServiceException, SQLException {
+        int idVal = fetchInt(id, "id");
+        if (adminMode) {
+            sketchDao.delete(idVal);
+        } else {
+            sketchDao.delete(fetchUserId(), idVal);
         }
     }
 

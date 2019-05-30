@@ -31,4 +31,8 @@ public interface SketchDao {
     void rename(int userId, int id, String name) throws SQLException;
 
     void rename(int id, String name) throws SQLException;
+
+    void delete(int userId, int id) throws SQLException;
+
+    void delete(int id) throws SQLException;
 }
