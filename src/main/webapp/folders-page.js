@@ -27,8 +27,13 @@ function onOwnerFoldersResponse() {
     removeAllChildren(foldersViewerEl);
     gFolderItemList = new ItemList('folders-table', onFolderClicked);
     gFolderItemList.setAsEditable(onFolderEditRequested);
-    gFolderItemList.setAsDeletable(onFolderDeleteRequested);
     gFolderItemList.setAsCreatable(onFolderCreateRequested);
+    if (hasAdminMode()) {
+        const header = ['', '', 'Owner (click to change)', '', ''];
+        gFolderItemList.setAsOwnable(onOwnerChangeRequested);
+        gFolderItemList.header = header;
+    }
+    gFolderItemList.setAsDeletable(onFolderDeleteRequested);
     gFolderItemList.setAsShareable(onFolderShareRequested);
 
     const foldersTable = gFolderItemList.create();
@@ -103,4 +108,14 @@ function onFolderShareRequested() {
     const folderId = this.getAttribute('item_id');
     storeFolderId(folderId);
     navigateToFolderSharedPage();
+}
+
+// Change ownership (only in admin mode)
+
+function onOwnerChangeRequested(res) {
+    console.log(res);
+    const xhr = new XhrSender('PUT', 'protected/folder_owner', onFolderUpdateResponse);
+    xhr.addParam('folder_id', res.id);
+    xhr.addParam('owner_name', res.name);
+    xhr.send();
 }

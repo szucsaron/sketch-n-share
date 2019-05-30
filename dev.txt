@@ -28,6 +28,11 @@ Servlet paths and restful methods
 		params: folder_d
 		return: MessageDto
 
+/protected/folder_owner
+    PUT: change folder ownership
+        params: folder_id, owner_name
+        return: MessageDto
+
 /protected/folder_share
     x GET: get all folders shared with a user
         params: -

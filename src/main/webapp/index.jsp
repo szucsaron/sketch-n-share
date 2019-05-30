@@ -36,6 +36,7 @@
 </head>
 <body>
     <div id="navbar" >
+        <button id="admin-mode-button">Admin mode</button>
         <button id="logout-button">Logout</button>
     </div>
     <div id="message-bar"></div>
@@ -73,7 +74,8 @@
         </form>
     </div>
     <div id="folders-page" class="hidden page">
-        My folders
+        <div class="user_text">My Folders</div>
+        <div class="admin_text hidden">All Folders</div>
         <div id="owner-folders"></div>
         Folders shared with me:
         <div id="shared-folders"></div>

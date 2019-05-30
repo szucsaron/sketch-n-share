@@ -1,6 +1,7 @@
 package com.codecool.sketch.dao.database;
 
 import com.codecool.sketch.dao.FolderDao;
+import com.codecool.sketch.dto.FolderOwnerDto;
 import com.codecool.sketch.model.Folder;
 
 import java.sql.Connection;
@@ -16,7 +17,9 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
     }
 
     public List<Folder> fetchByUserId(int userId) throws SQLException {
-        String sql = "SELECT * FROM folders WHERE owner = ?";
+        String sql = "SELECT folders.*, users.name AS owner_name FROM folders " +
+                "LEFT JOIN users ON users.id = owner " +
+                "WHERE owner = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, userId);
             preparedStatement.execute();
@@ -25,8 +28,9 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
     }
 
     public List<Folder> fetchAllShared(int userId) throws SQLException {
-        String sql = "SELECT folders.* FROM folders\n" +
-                "LEFT JOIN shares ON folders.id = folders_id\n" +
+        String sql = "SELECT folders.*, users.name AS owner_name FROM folders " +
+                "LEFT JOIN shares ON folders.id = folders_id " +
+                "LEFT JOIN users ON users.id = owner " +
                 "WHERE users_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, userId);
@@ -42,6 +46,22 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.execute();
             return executeMultipleFetch(preparedStatement);
+        }
+    }
+
+    public List<FolderOwnerDto> fetchAllOwnedDtos() throws SQLException {
+        String sql = "SELECT folders.*, users.name AS owner_name FROM folders\n" +
+                "LEFT JOIN users ON users.id = folders.owner";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.execute();
+            ResultSet rs = preparedStatement.getResultSet();
+            List<FolderOwnerDto> folderOwnerDtos = new ArrayList<>();
+            while (rs.next()) {
+                Folder folder = fetchFolder(rs);
+                String owner = rs.getString("owner_name");
+                folderOwnerDtos.add(new FolderOwnerDto(folder, owner));
+            }
+            return folderOwnerDtos;
         }
     }
 
@@ -74,13 +94,23 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
         }
     }
 
+    public void changeOwner(int folderId, String ownerName) throws SQLException {
+        String sql = "SELECT \"change_folder_owner\" (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, folderId);
+            preparedStatement.setString(2, ownerName);
+            preparedStatement.execute();
+        }
+    }
+
+
     public void delete(int userId, int folderId) throws SQLException {
-            String sql = "DELETE FROM folders WHERE owner = ? AND id = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                preparedStatement.setInt(1, userId);
-                preparedStatement.setInt(2, folderId);
-                preparedStatement.executeUpdate();
-            }
+        String sql = "DELETE FROM folders WHERE owner = ? AND id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, folderId);
+            preparedStatement.executeUpdate();
+        }
     }
 
     public void delete(int folderId) throws SQLException {
@@ -91,7 +121,7 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
         }
     }
 
-    private List<Folder> executeMultipleFetch(PreparedStatement preparedStatement) throws SQLException{
+    private List<Folder> executeMultipleFetch(PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.execute();
         ResultSet rs = preparedStatement.getResultSet();
         List<Folder> folders = new ArrayList<>();
@@ -104,7 +134,7 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
     private Folder fetchFolder(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String name = rs.getString("name");
-        int owner = rs.getInt("owner");
+        String owner = rs.getString("owner_name");
         return new Folder(id, name, owner);
     }
 }

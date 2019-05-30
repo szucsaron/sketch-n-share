@@ -1,5 +1,6 @@
 -- FUNCTION AND TABLE DROP
 
+DROP FUNCTION IF EXISTS change_folder_owner;
 DROP FUNCTION IF EXISTS delete_sketch;
 DROP FUNCTION IF EXISTS rename_sketch;
 DROP FUNCTION IF EXISTS create_sketch;
@@ -51,6 +52,21 @@ In the params, 'owner' stands for the user id of the function caller needed to b
 In case of illegal owners, the functions throw exceptions.
 
 */
+
+-- Change ownership of an existing folder
+-- params: folder_id, owner_name
+CREATE FUNCTION change_folder_owner(int, text) RETURNS void 
+AS '
+	DECLARE
+		new_owner_id integer;
+	BEGIN
+		new_owner_id = (SELECT id FROM users WHERE name = $2);
+		IF new_owner_id IS NULL THEN
+			RAISE EXCEPTION ''Invalid user name'';
+		END IF; 
+		UPDATE folders SET owner = new_owner_id WHERE id = $1;
+	END; '
+LANGUAGE plpgsql;
 
 -- Share a folder with user.
 -- params: owner, folder id, user name

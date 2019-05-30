@@ -43,6 +43,14 @@ public class ImplFolderService extends ImplAbstractService implements FolderServ
         }
     }
 
+    public void changeFolderOwner(String folderId, String ownerName) throws ServiceException, SQLException {
+        if (adminMode) {
+            folderDao.changeOwner(fetchInt(folderId, "folderId"), ownerName);
+        } else {
+            throw new ServiceException("User has no admin access to change ownership");
+        }
+    }
+
     public void delete(String folderId) throws ServiceException, SQLException {
         int folderIdVal = fetchInt(folderId, "folderId");
         if (adminMode) {

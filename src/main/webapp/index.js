@@ -10,6 +10,7 @@ let gSketchItemList = null;
 let gCanvas = null;
 let gShareMode = false;
 let gLastPageId = '';
+let gAdminMode = false;
 
 
 
@@ -74,16 +75,34 @@ function onOtherResponse(targetEl, xhr) {
     }
 }
 
-function storeAdminMode(isAdminModeOn) {
-    localStorage.setItem('adminMode', isAdminModeOn);
+function hideElementsByClassName(className) {
+    const elements = document.getElementsByClassName(className);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.add('hidden');
+    }
+}
+
+function showElementsByClassName(className) {
+    const elements = document.getElementsByClassName(className);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.remove('hidden');
+    }
+}
+
+function enterAdminMode() {
+    gAdminMode = true;
+    hideElementsByClassName('user_text');
+    showElementsByClassName('admin_text');
+}
+
+function exitAdminMode() {
+    gAdminMode = false;
+    showElementsByClassName('user_text');
+    hideElementsByClassName('admin_text');
 }
 
 function hasAdminMode() {
-    const adminMode = localStorage.getItem('adminMode');
-    if (adminMode == null) {
-        return false;
-    }
-    return adminMode;
+    return gAdminMode;
 }
 
 function storeShareMode(isShareModeOn) {
@@ -119,6 +138,9 @@ function onLoad() {
 
     const folderShareBackEl = document.getElementById('folder-share-back');
     folderShareBackEl.addEventListener('click', onFolderShareBackClicked);
+
+    const adminModeButton = document.getElementById('admin-mode-button');
+    adminModeButton.addEventListener('click', onAdminModeButtonClicked);
     
     /*
     if (hasAuthorization()) {
@@ -199,6 +221,18 @@ function getClickEventTarget(res) {
         return res.srcElement;
     } else {
         return el;
+    }
+}
+
+function onAdminModeButtonClicked() {
+    if (hasAdminMode()) {
+        exitAdminMode();
+        navigateToFoldersViewer();
+        handleTextMessage('Switched to normal mode');
+    } else {
+        enterAdminMode();
+        navigateToFoldersViewer();
+        handleTextMessage('Switched to admin mode');
     }
 }
 

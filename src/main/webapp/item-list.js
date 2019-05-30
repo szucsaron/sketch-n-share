@@ -1,3 +1,6 @@
+
+
+
 class ItemList {
     constructor(id, onItemClicked) {
         this._onItemClickedCallback = onItemClicked;
@@ -5,6 +8,7 @@ class ItemList {
         this._onDeleteClickedCallback = null;
         this._onNewItemCallback = null;
         this._onShareClickedCallback = null;
+        this._onOwnerChangeCallback = null;
 
         this.el = document.createElement('div');
         this.el.setAttribute('id', id);
@@ -13,6 +17,8 @@ class ItemList {
         this.el.appendChild(this.tableEl);
 
         this._fieldCreators = [];
+        this._editValueEl = null;
+        this.header = null;
 
     }
 
@@ -43,6 +49,11 @@ class ItemList {
         this.el.appendChild(this.newBtEl);
     }
 
+    setAsOwnable(ownerChangeCallback) {
+        this._onOwnerChangeCallback = ownerChangeCallback;
+        this._fieldCreators.push(this._generateOwnerField.bind(this));
+    }
+
     refreshWithNew(items) {
         this.items = items;
         this.refresh();
@@ -50,6 +61,15 @@ class ItemList {
 
     refresh() {
         this.tableEl.innerHTML = '';
+        if (this.header != null) {
+            const headerRow = document.createElement('tr');
+            for (let i =0; i < this._fieldCreators.length; i++) {
+                const tdEl = document.createElement('td');
+                tdEl.textContent = this.header[i];
+                headerRow.appendChild(tdEl);
+            }
+            this.tableEl.appendChild(headerRow);
+        }
         for (let i = 0; i < this.items.length; i++) {
             const item = this.items[i];
             this.tableEl.appendChild(this._generateRow(item));
@@ -96,6 +116,14 @@ class ItemList {
         return itemDeleteEl;
     }
 
+    _generateOwnerField(item) {
+        const itemEditEl = document.createElement('td');
+        itemEditEl.setAttribute('item_id', item.id);
+        itemEditEl.textContent = item.owner;
+        itemEditEl.addEventListener('click', this._onOwnerChangeClicked.bind(this));
+        return itemEditEl;
+    }
+
     _get_target(res) {
         const el = res.originalTarget;
         if (el == undefined) {
@@ -110,52 +138,10 @@ class ItemList {
         this._transformRowToEditable(el.parentElement);
     }
 
-    _transformRowToEditable(rowEl) {
-        const el = rowEl.childNodes[0];
-        this._transformFieldToEditable(el, this._saveItem);
-    }
-
-    _transformFieldToEditable(el, saveCallback) {
-        el.removeEventListener('click', this._onItemClickedCallback);
-        const itemId = el.getAttribute('item_id');
-
-        const inputEl = document.createElement('input');
-        inputEl.value = el.textContent;
-        inputEl.setAttribute('item_id', itemId);
-
-        el.textContent = '';
-        el.appendChild(inputEl);
-
-        const createButtonEl = document.createElement('button');
-        createButtonEl.setAttribute('item_id', itemId);
-        createButtonEl.textContent = 'Save';
-        createButtonEl.addEventListener('click', saveCallback.bind(this));
-        el.appendChild(createButtonEl);
-    }
-
-    _saveItem(res) {
-        const buttonEl = this._get_target(res);
-        const tdEl = buttonEl.parentElement;
-        const nameEl = tdEl.childNodes[0];
-        console.log(nameEl);
-
-        let result = {};
-        const id = tdEl.getAttribute('item_id');
-        result.name = nameEl.value;
-        result.itemList = this;
-        if (id == 'new') {
-            this._onNewItemCallback(result);
-        } else {
-            result.id = id;
-            this._onEditDoneCallback(result);
-        }
-    }
-
     _onDeleteClicked(res) {
         const el = this._get_target(res);
         let result = {};
         result.id = el.getAttribute('item_id');
-        result.itemList = this;
         this._onDeleteClickedCallback(result);
     }
 
@@ -166,5 +152,56 @@ class ItemList {
         const rowEl = this._generateRow(item);
         this._transformRowToEditable(rowEl);
         this.tableEl.appendChild(rowEl);
+    }
+
+    _onOwnerChangeClicked(res) {
+        const el = this._get_target(res);
+        this._transformFieldToEditable(el, this._changeOwner);
+    }
+
+    _transformRowToEditable(rowEl) {
+        const el = rowEl.childNodes[0];
+        this._transformFieldToEditable(el, this._saveItem);
+    }
+
+    _transformFieldToEditable(el, saveCallback) {
+        // el.removeEventListener('click', this._onItemClickedCallback);
+        const itemId = el.getAttribute('item_id');
+
+        let new_element = el.cloneNode(true);
+        el.parentNode.replaceChild(new_element, el);
+
+        const inputEl = document.createElement('input');
+        inputEl.value = new_element.textContent;
+        inputEl.setAttribute('item_id', itemId);
+
+        new_element.textContent = '';
+        new_element.appendChild(inputEl);
+
+        const createButtonEl = document.createElement('button');
+        createButtonEl.setAttribute('item_id', itemId);
+        createButtonEl.textContent = 'Save';
+        createButtonEl.addEventListener('click', saveCallback.bind(this));
+        new_element.appendChild(createButtonEl);
+        this._editValueEl = inputEl;
+    }
+
+    _saveItem() {
+        const id = this._editValueEl.getAttribute('item_id');
+        let result = {};
+        result.name = this._editValueEl.value;
+        if (id == 'new') {
+            this._onNewItemCallback(result);
+        } else {
+            result.id = id;
+            this._onEditDoneCallback(result);
+        }
+    }
+
+    _changeOwner() {
+        let result = {};
+        result.id = this._editValueEl.getAttribute('item_id');;
+        result.name = this._editValueEl.value;
+        this._onOwnerChangeCallback(result)
     }
 }

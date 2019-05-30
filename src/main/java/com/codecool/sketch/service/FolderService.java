@@ -15,6 +15,8 @@ public interface FolderService extends AbstractService {
 
     void rename(String folderId, String name) throws ServiceException, SQLException;
 
+    void changeFolderOwner(String folderId, String ownerName) throws ServiceException, SQLException;
+
     void delete(String folderId) throws ServiceException, SQLException;
 
 }
