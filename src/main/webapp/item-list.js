@@ -5,7 +5,6 @@ class ItemList {
         this._onDeleteClickedCallback = null;
         this._onNewItemCallback = null;
         this._onShareClickedCallback = null;
-        this._onChangeOwnerCallback = null;
 
         this.el = document.createElement('div');
         this.el.setAttribute('id', id);
@@ -44,11 +43,6 @@ class ItemList {
         this.el.appendChild(this.newBtEl);
     }
 
-    setAsOwnable(changeOwnerCallback) {
-        this._onChangeOwnerCallback = changeOwnerCallback;
-        this._fieldCreators.push(this._generateOwnerField.bind(this));
-    }
-
     refreshWithNew(items) {
         this.items = items;
         this.refresh();
@@ -75,23 +69,6 @@ class ItemList {
             trEl.appendChild(this._fieldCreators[i](item));
         }
         return trEl;
-    }
-
-    _generateEditField(item) {
-        const itemEditEl = document.createElement('td');
-        itemEditEl.setAttribute('item_id', item.id);
-        itemEditEl.setAttribute('mode', 'edit');
-        itemEditEl.textContent = "Edit";el.setAttribute('mode', 'save');
-        if (el.getAttribute('item_id') == 'new') {
-            el.textContent = 'Create';
-        } else {
-            el.textContent = 'Save';
-        }
-
-        const nameEl = el.parentElement.childNodes[0];
-        nameEl.removeEventListener('click', this._onItemClickedCallback);
-        itemEditEl.addEventListener('click', this._onEditClicked.bind(this));
-        return itemEditEl;
     }
 
     _generateEditField(item) {
@@ -130,7 +107,6 @@ class ItemList {
 
     _onEditClicked(res) {
         const el = this._get_target(res);
-        const mode = el.getAttribute('mode');
         this._transformRowToEditable(el.parentElement);
     }
 
