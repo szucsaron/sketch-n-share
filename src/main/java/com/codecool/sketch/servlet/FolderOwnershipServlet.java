@@ -31,7 +31,7 @@ public class FolderOwnershipServlet extends AbstractServlet {
             folderService.validateAdminMode(fetchAdminMode(req));
 
             folderService.changeFolderOwner(folderId, ownerName);
-            sendMessage(resp, SC_OK, "Folder renamed");
+            sendMessage(resp, SC_OK, "Folder owner changed");
         } catch (SQLException | ServiceException e) {
             handleError(resp, e);
         }

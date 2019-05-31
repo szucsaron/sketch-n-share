@@ -24,6 +24,21 @@ public class DatabaseUserDao extends DatabaseAbstractDao implements UserDao {
         }
     }
 
+    public User fetchById(int id) throws SQLException {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            return executeSingleFetch(preparedStatement);
+        }
+    }
+
+    public List<User> featchAll() throws SQLException {
+        String sql = "SELECT id, name, role FROM users";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            return executeMultipleFetch(preparedStatement);
+        }
+    }
+
     public List<User> fetchBySharedFolder(int ownerId, int folderId) throws SQLException {
         String sql = "SELECT users.name, users.id, users.role  FROM users\n" +
                 "RIGHT JOIN shares ON users.id = users_id\n" +
@@ -66,7 +81,36 @@ public class DatabaseUserDao extends DatabaseAbstractDao implements UserDao {
             preparedStatement.setInt(1, owner);
             preparedStatement.setInt(2, folderId);
             preparedStatement.setInt(3, userId);
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public void add(String name, String password, int role) throws SQLException {
+        String sql = "INSERT INTO users (name, password, role) VALUES (?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, password);
+            preparedStatement.setInt(3, role);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public void delete(int id) throws SQLException {
+        String sql = "DELETE FROM users WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public void modify(int userId, String name, String password, int role) throws SQLException {
+        String sql = "UPDATE users SET name = ?, password = ?, role = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, password);
+            preparedStatement.setInt(3, role);
+            preparedStatement.setInt(4, userId);
+            preparedStatement.executeUpdate();
         }
     }
 

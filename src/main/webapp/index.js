@@ -7,12 +7,33 @@ const INTERNAL_SERVER_ERROR = 500;
 let gFolderItemList = null;
 let gFolderShareItemList = null;
 let gSketchItemList = null;
+let gUserItemList = null;
 let gCanvas = null;
 let gShareMode = false;
 let gLastPageId = '';
 let gAdminMode = false;
 
+function hideElementsByClassName(className) {
+    const elements = document.getElementsByClassName(className);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.add('hidden');
+    }
+}
 
+function showElementsByClassName(className) {
+    const elements = document.getElementsByClassName(className);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.remove('hidden');
+    }
+}
+
+function showElementById(id) {
+    document.getElementById(id).classList.remove('hidden');
+}
+
+function hideElementById(id) {
+    document.getElementById(id).classList.add('hidden');
+}
 
 function showContents(ids) {
     const contentEls = document.getElementsByClassName('page');
@@ -75,30 +96,18 @@ function onOtherResponse(targetEl, xhr) {
     }
 }
 
-function hideElementsByClassName(className) {
-    const elements = document.getElementsByClassName(className);
-    for (let i = 0; i < elements.length; i++) {
-        elements[i].classList.add('hidden');
-    }
-}
-
-function showElementsByClassName(className) {
-    const elements = document.getElementsByClassName(className);
-    for (let i = 0; i < elements.length; i++) {
-        elements[i].classList.remove('hidden');
-    }
-}
-
 function enterAdminMode() {
     gAdminMode = true;
     hideElementsByClassName('user_text');
     showElementsByClassName('admin_text');
+    document.getElementById('admin-mode-button').textContent = "Exit admin mode";
 }
 
 function exitAdminMode() {
     gAdminMode = false;
     showElementsByClassName('user_text');
     hideElementsByClassName('admin_text');
+    document.getElementById('admin-mode-button').textContent = "Enter admin mode";
 }
 
 function hasAdminMode() {
@@ -142,12 +151,17 @@ function onLoad() {
     const adminModeButton = document.getElementById('admin-mode-button');
     adminModeButton.addEventListener('click', onAdminModeButtonClicked);
     
-    /*
-    if (hasAuthorization()) {
-        onProfileLoad(getAuthorization());
-    }
-    */
+    const usersListButton = document.getElementById('users-list-button');
+    usersListButton.addEventListener('click', navigateToUsersListPage)
+
+    const userListPageBackButton = document.getElementById('users-list-page-back');
+    userListPageBackButton.addEventListener('click', navigateToFoldersViewer);
     
+    const userMgrPageBackButton = document.getElementById('users-mgr-page-back');
+    userMgrPageBackButton.addEventListener('click', navigateToUsersListPage);
+
+    const userMgrPageSaveButton = document.getElementById('user-mgr-save-button');
+    userMgrPageSaveButton.addEventListener('click', saveUser);
 }
 
 class XhrSender {

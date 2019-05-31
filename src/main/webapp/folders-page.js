@@ -39,10 +39,7 @@ function onOwnerFoldersResponse() {
     const foldersTable = gFolderItemList.create();
     foldersViewerEl.appendChild(foldersTable);
     gFolderItemList.refreshWithNew(JSON.parse(this.responseText));
-    
 }
-
-
 
 function onSharedFoldersResponse() {
     handlePageTransition('folders-page');

@@ -56,14 +56,18 @@ class ItemList {
 
     refreshWithNew(items) {
         this.items = items;
-        this.refresh();
+        if (items.length == 0 | items == null | items == undefined) {
+        this.tableEl.innerHTML = '--------------------------------------';
+        } else {
+            this.refresh();
+        }
     }
 
     refresh() {
         this.tableEl.innerHTML = '';
         if (this.header != null) {
             const headerRow = document.createElement('tr');
-            for (let i =0; i < this._fieldCreators.length; i++) {
+            for (let i =0; i < this.header.length; i++) {
                 const tdEl = document.createElement('td');
                 tdEl.textContent = this.header[i];
                 headerRow.appendChild(tdEl);

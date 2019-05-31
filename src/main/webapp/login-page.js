@@ -3,6 +3,12 @@ function hasAuthorization() {
 }
 
 function setAuthorization(user) {
+    if (user.role == 'ADMIN') {
+        console.log(user);
+        showElementById('admin-mode-button');
+    } else {
+        hideElementById('admin-mode-button');
+    }
     return localStorage.setItem('user', JSON.stringify(user));
 }
 
@@ -20,6 +26,7 @@ function onLoginResponse() {
         const user = JSON.parse(this.responseText);
         setAuthorization(user);
         // storeAdminMode(true);
+        showElementsByClassName('inner_utility');
         navigateToFoldersViewer();
     } else {
         handleError(this.JSON)
@@ -49,6 +56,8 @@ function onRegisterButtonClicked() {
 function onLogoutResponse() {
     if (this.status === OK) {
         setUnauthorized();
+        exitAdminMode();
+        hideElementsByClassName('inner_utility');
         showContents(['login-page'])
     } else {
         onOtherResponse(logoutContentDivEl, this);
@@ -57,6 +66,7 @@ function onLogoutResponse() {
 
 function onLogoutButtonClicked(event) {
     const xhr = new XhrSender('POST', 'protected/logout', onLogoutResponse)
+    clearMessageBar();
     xhr.send();
 }
 

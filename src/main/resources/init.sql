@@ -26,7 +26,7 @@ CREATE TABLE users (
 CREATE TABLE folders (
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(100),
-	owner INT REFERENCES users(id)
+	owner INT REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE sketches (

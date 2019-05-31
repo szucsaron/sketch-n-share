@@ -17,6 +17,10 @@
     <c:url value="/folder-share-page.js" var="folderShareUrl"/>
     <c:url value="/canvas-tools.js" var="canvasToolsUrl"/>
     <c:url value="/canvas-page.js" var="canvasUrl"/>
+    <c:url value="/users-list-page.js" var="usersListUrl"/>
+    <c:url value="/user-mgr-page.js" var="userMgrUrl"/>
+
+
 
     <script src="${indexScriptUrl}"></script>
     <script src="${itemListUrl}"></script>
@@ -27,16 +31,18 @@
     <script src="${folderContentUrl}"></script>
     <script src="${folderShareUrl}"></script>
     <script src="${canvasToolsUrl}"></script>
-
     <script src="${canvasUrl}"></script>
+    <script src="${usersListUrl}"></script>
+    <script src="${userMgrUrl}"></script>
+
 
 
 
     <link rel="stylesheet" type="text/css" href="${styleUrl}">
 </head>
 <body>
-    <div id="navbar" >
-        <button id="admin-mode-button">Admin mode</button>
+    <div id="navbar" class="inner_utility hidden">
+        <button id="admin-mode-button" class="hidden">Enter admin mode</button>
         <button id="logout-button">Logout</button>
     </div>
     <div id="message-bar"></div>
@@ -56,26 +62,17 @@
             <input type="text" name="name" placeholder="Name">
             <input type="password" name="password" placeholder="Password">
             <button id="login-button">Login</button>
-            <button id="register-button">Register</button>
-        </form>
-    </div>
-    <div id="register-page" class="hidden page">
-        <h1>Register</h1>
-        <form id="register-form" onsubmit="return false;">
-            <input type="text" name="email" placeholder="Email">
-            <br>
-            <input type="password" name="password" placeholder="Password">
-            <br>
-            <input type="password" name="repassword" placeholder="Re-enter password">
-            <br>
-            <input type="text" name="name" placeholder="Name">
-            <br>
-            <button id="registration-button">Register</button>
         </form>
     </div>
     <div id="folders-page" class="hidden page">
         <div class="user_text">My Folders</div>
-        <div class="admin_text hidden">All Folders</div>
+        <div class="admin_text hidden">
+            <button id="users-list-button">
+                View users
+            </button>
+            <br>
+            All Folders
+        </div>
         <div id="owner-folders"></div>
         Folders shared with me:
         <div id="shared-folders"></div>
@@ -89,7 +86,25 @@
         Users with shares
         <div id ="folder-share-page-content"></div>
         <button id="folder-share-back">Back</button>
-
+    </div>
+    <div id="users-list-page" class="hidden page">
+        Click on a user for editing
+        <div id="users-list-page-content"></div>
+        <button id="users-list-page-back">Back</button>
+    </div>
+    <div id="user-mgr-page" class="hidden page">
+        <h1>Manage User</h1>
+        <form id="user-mgr-form" onsubmit="return false;">
+            Name<br>
+            <input id="user-mgr-input-name" type="text" name="name" ><br>
+            Password<br>
+            <input id="user-mgr-input-password" type="text" name="password"><br>
+            Role<br>
+            Regular<input id="user-mgr-input-rad-regular" type="radio" name="role" value="REGULAR" checked><br>
+            Admin<input id="user-mgr-input-rad-admin" type="radio" name="role" value="ADMIN" checked><br>
+            <button id="user-mgr-save-button">Save</button>
+        </form>
+        <button id="users-mgr-page-back">Back</button>
     </div>
     
     
