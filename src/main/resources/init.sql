@@ -1,5 +1,13 @@
 -- FUNCTION AND TABLE DROP
 
+DROP TRIGGER IF EXISTS validate_sketch_update ON sketches;
+DROP TRIGGER IF EXISTS validate_sketch_insert ON sketches;
+DROP FUNCTION IF EXISTS validate_sketch_update;
+
+DROP TRIGGER IF EXISTS validate_folder_update ON folders;
+DROP TRIGGER IF EXISTS validate_folder_insert ON folders;
+DROP FUNCTION IF EXISTS validate_folder_update;
+
 DROP FUNCTION IF EXISTS change_folder_owner;
 DROP FUNCTION IF EXISTS delete_sketch;
 DROP FUNCTION IF EXISTS rename_sketch;
@@ -43,7 +51,7 @@ CREATE TABLE shares (
 );
 
 
--- QUERY FUNCTIONS
+-- INSERT / UPDATE / DELETE FUNCTIONS
 /*
 The following functions are used to simplify table insertions and updates where user verification
 would normally call for multiple SQL queries made by the db client. Using these functions requires
@@ -57,121 +65,134 @@ In case of illegal owners, the functions throw exceptions.
 -- params: folder_id, owner_name
 CREATE FUNCTION change_folder_owner(int, text) RETURNS void 
 AS '
-	DECLARE
-		new_owner_id integer;
-	BEGIN
-		new_owner_id = (SELECT id FROM users WHERE name = $2);
-		IF new_owner_id IS NULL THEN
-			RAISE EXCEPTION ''Invalid user name'';
-		END IF; 
-		UPDATE folders SET owner = new_owner_id WHERE id = $1;
-	END; '
+DECLARE
+	new_owner_id integer;
+BEGIN
+	new_owner_id = (SELECT id FROM users WHERE name = $2);
+	IF new_owner_id IS NULL THEN
+		RAISE EXCEPTION ''Invalid user name'';
+	END IF; 
+	UPDATE folders SET owner = new_owner_id WHERE id = $1;
+END; '
 LANGUAGE plpgsql;
 
 -- Share a folder with user.
 -- params: owner, folder id, user name
 CREATE FUNCTION share_folder_with_user(int, int, text) RETURNS void 
 AS '
-	DECLARE	
-		user_id integer;
-	BEGIN
-		user_id = (SELECT id FROM users WHERE name = $3);
-		IF user_id IS NULL THEN
-			RAISE EXCEPTION ''User doesn''''t exist '';
-		END IF;
-		IF (SELECT owner FROM folders WHERE id = $2) != $1 THEN
-			RAISE EXCEPTION ''Folders sharing can only be managed by owners'';
-		END IF;
-		INSERT INTO shares (users_id, folders_id) VALUES (user_id, $2);
-	END; '
+DECLARE	
+	user_id integer;
+BEGIN
+	user_id = (SELECT id FROM users WHERE name = $3);
+	IF user_id IS NULL THEN
+		RAISE EXCEPTION ''User doesn''''t exist '';
+	END IF;
+	IF (SELECT owner FROM folders WHERE id = $2) != $1 THEN
+		RAISE EXCEPTION ''Folders sharing can only be managed by owners'';
+	END IF;
+	INSERT INTO shares (users_id, folders_id) VALUES (user_id, $2);
+END; '
 LANGUAGE plpgsql;
 
 -- Unshare an existing shared folder with a user
 -- params: owner, folder id, user id
 CREATE FUNCTION unshare_folder_with_user(int, int, int) RETURNS void 
 AS '
-	BEGIN 
-		IF (SELECT owner FROM folders WHERE id = $2) != $1 THEN
-			RAISE EXCEPTION ''Folders sharing can only be managed by owners'';
-		END IF;
-		DELETE FROM shares WHERE users_id = $3 AND folders_id = $2;
-	END; '
+BEGIN 
+	IF (SELECT owner FROM folders WHERE id = $2) != $1 THEN
+		RAISE EXCEPTION ''Folders sharing can only be managed by owners'';
+	END IF;
+	DELETE FROM shares WHERE users_id = $3 AND folders_id = $2;
+END; '
 LANGUAGE plpgsql;
 
 -- Change every data of a sketch. Should be used when saving an edited sketch.
 -- params: 1 owner, 2 id, 3 folderId, 4 name, 5 content
 CREATE FUNCTION update_sketch(int, int, int, text, text) RETURNS void
-AS 
-' 
-	BEGIN
-		IF (SELECT users.id FROM users LEFT JOIN folders ON users.id = owner
-			WHERE folders.id = $3) != $1 THEN
-			RAISE EXCEPTION ''Sketches can only be updated by the owners of their folders'';
-		END IF;
-		UPDATE sketches SET folders_id = $3, name = $4, content = $5 WHERE id = $2;
-	END;
-
-'
+AS ' 
+BEGIN
+	IF (SELECT users.id FROM users LEFT JOIN folders ON users.id = owner
+		WHERE folders.id = $3) != $1 THEN
+		RAISE EXCEPTION ''Sketches can only be updated by the owners of their folders'';
+	END IF;
+	UPDATE sketches SET folders_id = $3, name = $4, content = $5 WHERE id = $2;
+END;'
 LANGUAGE plpgsql;
 
 -- Create a new empty sketch without content.
 -- params: owner, folder_id, name
 CREATE FUNCTION create_sketch(int, int, text) RETURNS void
 AS 
-' 
-	BEGIN
-		IF (SELECT owner FROM folders WHERE id = $2) != $1 THEN
-			RAISE EXCEPTION ''Sketches can only be created by the owners of their folders'';
-		END IF;
-		INSERT INTO sketches (folders_id, name) VALUES ($2, $3);
-	END;
-
-'
+'BEGIN
+	IF (SELECT owner FROM folders WHERE id = $2) != $1 THEN
+		RAISE EXCEPTION ''Sketches can only be created by the owners of their folders'';
+	END IF;
+	INSERT INTO sketches (folders_id, name) VALUES ($2, $3);
+END;'
 LANGUAGE plpgsql;
 
 -- Rename existing sketch
 -- params: owner, sketch_id, name
 CREATE FUNCTION rename_sketch(int, int, text) RETURNS void
 AS 
-' 
-	BEGIN
-		IF (SELECT owner FROM folders
-			RIGHT JOIN sketches ON folders.id = folders_id
-			WHERE sketches.id = $2) != $1 THEN
-			RAISE EXCEPTION ''Sketches can only be renamed by the owners of their folders'';
-		END IF;
-		UPDATE sketches SET name = $3 WHERE id = $2;
-	END;
-
-'
+'BEGIN
+	IF (SELECT owner FROM folders
+		RIGHT JOIN sketches ON folders.id = folders_id
+		WHERE sketches.id = $2) != $1 THEN
+		RAISE EXCEPTION ''Sketches can only be renamed by the owners of their folders'';
+	END IF;
+	UPDATE sketches SET name = $3 WHERE id = $2;
+END;'
 LANGUAGE plpgsql;
 
 -- Delete an existing sketch
 -- params: owner, sketch_id
 CREATE FUNCTION delete_sketch(int, int) RETURNS void
-AS 
-' 
-	BEGIN
-		IF (SELECT owner FROM folders
-			RIGHT JOIN sketches ON folders.id = folders_id
-			WHERE sketches.id = $2) != $1 THEN
-			RAISE EXCEPTION ''Sketches can only be deleted by the owners of their folders'';
-		END IF;
-		DELETE FROM sketches WHERE id = $2;
-	END;
-
-'
+AS ' 
+BEGIN
+	IF (SELECT owner FROM folders
+		RIGHT JOIN sketches ON folders.id = folders_id
+		WHERE sketches.id = $2) != $1 THEN
+		RAISE EXCEPTION ''Sketches can only be deleted by the owners of their folders'';
+	END IF;
+	DELETE FROM sketches WHERE id = $2;
+END;'
 LANGUAGE plpgsql;
 
 
 -- TRIGGER FUNCTIONS
-/*
- * Work in progress
- */
--- validate_folder_insertion(...): should check for name uniqueness among folders of owner user
--- validate_folder_update(...): should check for name uniqueness among folders of owner user
--- validate_sketch_insertion(...): should check for name uniqueness in containing folder
--- validate_sketch_update(...): should check for name uniqueness in containing folder
+
+-- Check name uniqueness among folders of the same owner
+CREATE FUNCTION validate_folder_update() RETURNS trigger
+AS '
+BEGIN
+	IF (SELECT id FROM folders 
+		WHERE name = NEW.name AND owner = NEW.owner LIMIT 1) IS NOT NULL THEN
+		RAISE EXCEPTION ''Folder name must be unique!'';
+	END IF;
+	RETURN NEW;
+END;'
+LANGUAGE plpgsql;
+CREATE TRIGGER validate_folder_insert BEFORE INSERT ON folders
+FOR EACH ROW EXECUTE PROCEDURE validate_folder_update();
+CREATE TRIGGER validate_folder_update BEFORE UPDATE ON folders
+FOR EACH ROW EXECUTE PROCEDURE validate_folder_update();
+
+-- Check name uniqueness among sketches in the same folder
+CREATE FUNCTION validate_sketch_update() RETURNS trigger
+AS '
+BEGIN
+	IF (SELECT id FROM sketches 
+		WHERE name = NEW.name AND folders_id = NEW.folders_id LIMIT 1) IS NOT NULL THEN
+		RAISE EXCEPTION ''Sketch name must be unique'';
+	END IF;
+	RETURN NEW;
+END;'
+LANGUAGE plpgsql;
+CREATE TRIGGER validate_sketch_insert BEFORE INSERT ON sketches
+FOR EACH ROW EXECUTE PROCEDURE validate_sketch_update();
+CREATE TRIGGER validate_sketch_update BEFORE UPDATE ON sketches
+FOR EACH ROW EXECUTE PROCEDURE validate_sketch_update();
 
 
 -- STOCK DATA INSERTION
@@ -187,7 +208,7 @@ INSERT INTO users (name, password, role) VALUES
 
 INSERT INTO folders (name, owner) VALUES
 ('Work', 1), --1
-('Unfinished Projects', 1), --2
+('Unfinished', 1), --2
 ('B''s Sketches', 2) --3
 ;
 
@@ -203,4 +224,6 @@ INSERT INTO sketches (name, folders_id, content) VALUES
 
 INSERT INTO shares (folders_id, users_id) VALUES 
 (1, 2);
+
+
 

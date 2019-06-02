@@ -33,7 +33,10 @@ abstract class AbstractServlet extends HttpServlet {
     }
 
     protected void handleError(HttpServletResponse resp, Exception ex) throws IOException {
-        sendMessage(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
+        String msg = ex.getLocalizedMessage();
+        String[] msgArr = msg.split("Where:");
+        sendMessage(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, msgArr[0]);
+
         ex.printStackTrace();
     }
 
