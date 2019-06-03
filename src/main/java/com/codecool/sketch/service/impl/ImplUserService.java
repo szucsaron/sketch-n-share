@@ -69,29 +69,30 @@ public final class ImplUserService extends ImplAbstractService implements UserSe
         }
     }
 
-    public void delete(String id) throws SQLException, ServiceException {
+    public boolean delete(String id) throws SQLException, ServiceException {
         if (adminMode) {
             int idVal = fetchInt(id, "id");
-            if (fetchUserId() == idVal) {
-                throw new ServiceException("Admins can't delete themselves! Please, ask another admin to delete your account.");
-            }
             userDao.delete(idVal);
+            if (idVal == fetchUserId()) {
+                return true;
+            }
         } else {
             throw new ServiceException("User has no admin privileges!");
         }
+        return false;
     }
 
-    public void modify(String userId, String name, String password, String role) throws SQLException, ServiceException {
+    public boolean modify(String userId, String name, String password, String role) throws SQLException, ServiceException {
         if (adminMode) {
             int userIdVal = fetchInt(userId, "userId");
-            if (userIdVal == fetchUserId() && role.equals("REGULAR")) {
-                throw new ServiceException("Admins can't demote themselves to regular user level. Please, ask another admin to change your account");
-            }
             userDao.modify(fetchInt(userId, "userId"), name, password, getRoleInt(role));
+            if (userIdVal == fetchUserId()) {
+                return true;
+            }
         } else {
             throw new ServiceException("User has no admin privileges!");
-
         }
+        return false;
     }
 
     private int getRoleInt(String role) throws ServiceException {

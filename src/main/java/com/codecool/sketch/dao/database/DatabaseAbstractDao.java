@@ -16,7 +16,7 @@ abstract class DatabaseAbstractDao implements AutoCloseable {
         int insertCount = statement.executeUpdate();
         if (insertCount != 1) {
             connection.rollback();
-            throw new SQLException("Expected 1 row to be inserted");
+            throw new SQLException("More than one row inserted, only one was expected. Transaction rolled back");
         }
     }
 

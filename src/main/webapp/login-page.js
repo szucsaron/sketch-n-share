@@ -53,20 +53,16 @@ function onRegisterButtonClicked() {
     showContents(['register-content']);
 }
 
-function onLogoutResponse() {
-    if (this.status === OK) {
-        setUnauthorized();
-        exitAdminMode();
-        hideElementsByClassName('inner_utility');
-        showContents(['login-page'])
-    } else {
-        onOtherResponse(logoutContentDivEl, this);
-    }
-}
 
-function onLogoutButtonClicked(event) {
-    const xhr = new XhrSender('POST', 'protected/logout', onLogoutResponse)
+function onLogoutButtonClicked() {
+    const xhr = new XhrSender('POST', 'protected/logout', handleLogout)
     clearMessageBar();
     xhr.send();
 }
 
+function handleLogout() {
+    setUnauthorized();
+    exitAdminMode();
+    hideElementsByClassName('inner_utility');
+    handlePageTransition('login-page');
+}

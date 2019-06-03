@@ -22,8 +22,10 @@ public interface UserService extends AbstractService {
 
     void add(String name, String password, String role) throws SQLException, ServiceException;
 
-    void delete(String id) throws SQLException, ServiceException;
+    // Returns true if modified user and session user are the same
+    boolean delete(String id) throws SQLException, ServiceException;
 
-    void modify(String userId, String name, String password, String role) throws SQLException, ServiceException;
+    // Returns true if modified user and session user are the same
+    boolean modify(String userId, String name, String password, String role) throws SQLException, ServiceException;
 
 }

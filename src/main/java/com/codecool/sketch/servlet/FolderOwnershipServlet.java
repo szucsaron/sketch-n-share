@@ -2,7 +2,6 @@ package com.codecool.sketch.servlet;
 
 import com.codecool.sketch.dao.FolderDao;
 import com.codecool.sketch.dao.database.DatabaseFolderDao;
-import com.codecool.sketch.model.Folder;
 import com.codecool.sketch.service.FolderService;
 import com.codecool.sketch.service.exception.ServiceException;
 import com.codecool.sketch.service.impl.ImplFolderService;
@@ -13,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 

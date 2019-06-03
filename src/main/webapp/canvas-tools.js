@@ -69,7 +69,7 @@ class Canvas {
      }
 
     __onDeleteButtonClicked() {
-        this.__handleMessage('Delete mode: Hold down mouse and hover over elements to delete')
+        this.__handleMessage('Delete mode: Hold down mouse button and hover on elements to delete')
         this.__drawMode = DRAWMODE.delete;
     }
 

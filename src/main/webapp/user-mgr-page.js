@@ -54,7 +54,7 @@ function saveUser() {
     xhr.send();
     if (getAuthorization().id == userId) {
         alert('Please, log in again to use your updated account');
-        onLogoutButtonClicked();
+        handleLogout();
     }
 }
 

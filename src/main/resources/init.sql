@@ -1,5 +1,11 @@
 -- FUNCTION AND TABLE DROP
 
+DROP TRIGGER IF EXISTS validate_user_delete ON users;
+DROP FUNCTION IF EXISTS validate_user_delete;
+
+DROP TRIGGER IF EXISTS validate_user_update ON users;
+DROP FUNCTION IF EXISTS validate_user_update;
+
 DROP TRIGGER IF EXISTS validate_sketch_update ON sketches;
 DROP TRIGGER IF EXISTS validate_sketch_insert ON sketches;
 DROP FUNCTION IF EXISTS validate_sketch_update;
@@ -167,12 +173,8 @@ LANGUAGE plpgsql;
 CREATE FUNCTION validate_folder_update() RETURNS trigger
 AS '
 BEGIN
-	IF (SELECT name FROM folders WHERE id = NEW.id) != NEW.name OR
-	   (SELECT owner FROM folders WHERE id = NEW.id) != NEW.owner THEN
-		IF (SELECT id FROM folders 
-			WHERE name = NEW.name AND owner = NEW.owner LIMIT 1) IS NOT NULL THEN
-			RAISE EXCEPTION ''Folder name must be unique!'';
-		END IF;
+	IF (SELECT id FROM folders WHERE name = NEW.name AND owner = NEW.owner LIMIT 1) IS NOT NULL THEN
+		RAISE EXCEPTION ''Folder name must be unique!'';
 	END IF;
 	RETURN NEW;
 END;'
@@ -186,11 +188,10 @@ FOR EACH ROW EXECUTE PROCEDURE validate_folder_update();
 CREATE FUNCTION validate_sketch_update() RETURNS trigger
 AS '
 BEGIN
-	IF (SELECT name FROM sketches WHERE id = NEW.id) != NEW.name THEN
-		IF (SELECT id FROM sketches 
-			WHERE name = NEW.name AND folders_id = NEW.folders_id LIMIT 1) IS NOT NULL THEN
-			RAISE EXCEPTION ''Sketch name must be unique'';
-		END IF;
+	IF (SELECT id FROM sketches 
+		WHERE name = NEW.name AND folders_id = NEW.folders_id 
+		AND id != NEW.id LIMIT 1) IS NOT NULL THEN
+		RAISE EXCEPTION ''Sketch name must be unique'';
 	END IF;
 	RETURN NEW;
 END;'
@@ -200,9 +201,47 @@ FOR EACH ROW EXECUTE PROCEDURE validate_sketch_update();
 CREATE TRIGGER validate_sketch_update BEFORE UPDATE ON sketches
 FOR EACH ROW EXECUTE PROCEDURE validate_sketch_update();
 
+--Ensure superuser 'root' can't be modified beyond password
+CREATE FUNCTION validate_user_update() RETURNS trigger
+AS '
+BEGIN
+	IF NEW.id = 0 THEN
+		IF NEW.name != ''root'' THEN
+			RAISE EXCEPTION ''root user name cannot be modified!'';
+		END IF;
+		IF NEW.role != ''1'' THEN
+			RAISE EXCEPTION ''root user role cannot be modified!'';
+		END IF;
+	END IF;
+	IF NEW.name = ''root'' AND NEW.id != 0 THEN
+		RAISE EXCEPTION ''root user id cannot be modified!'';
+	END IF; 
+	RETURN NEW;
+END;'
+LANGUAGE plpgsql;
+CREATE TRIGGER validate_user_update BEFORE UPDATE ON users
+FOR EACH ROW EXECUTE PROCEDURE validate_user_update();
+
+CREATE FUNCTION validate_user_delete() RETURNS trigger
+AS '
+BEGIN
+	IF OLD.id = 0 OR OLD.name = ''root'' THEN
+		RAISE EXCEPTION ''Root cannot be deleted!'';
+	END IF;
+	RETURN NEW;
+END;'
+LANGUAGE plpgsql;
+CREATE TRIGGER validate_user_delete BEFORE DELETE ON users
+FOR EACH ROW EXECUTE PROCEDURE validate_user_delete();
+
 
 -- STOCK DATA INSERTION
 
+-- Create root superuser
+INSERT INTO users (id, name, password, role) VALUES
+(0, 'root', '1234', '1');
+
+-- Create normal users
 INSERT INTO users (name, password, role) VALUES 
 ('a', 'a', '1'), --1
 ('b', 'a', '0'), --2
@@ -230,6 +269,5 @@ INSERT INTO sketches (name, folders_id, content) VALUES
 
 INSERT INTO shares (folders_id, users_id) VALUES 
 (1, 2);
-
 
 

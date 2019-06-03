@@ -4,10 +4,8 @@ package com.codecool.sketch.servlet;
 import com.codecool.sketch.dao.UserDao;
 import com.codecool.sketch.dao.database.DatabaseUserDao;
 import com.codecool.sketch.model.User;
-import com.codecool.sketch.service.LoginService;
 import com.codecool.sketch.service.UserService;
 import com.codecool.sketch.service.exception.ServiceException;
-import com.codecool.sketch.service.impl.ImplLoginService;
 import com.codecool.sketch.service.impl.ImplUserService;
 
 import javax.servlet.annotation.WebServlet;

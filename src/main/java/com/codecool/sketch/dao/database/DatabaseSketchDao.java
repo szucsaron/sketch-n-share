@@ -136,7 +136,7 @@ public class DatabaseSketchDao extends DatabaseAbstractDao implements SketchDao 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, folderId);
             preparedStatement.setString(2, name);
-            preparedStatement.executeUpdate();
+            executeInsert(preparedStatement);
         }
     }
 

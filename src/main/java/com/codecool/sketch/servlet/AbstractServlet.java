@@ -45,6 +45,10 @@ abstract class AbstractServlet extends HttpServlet {
         return loggedInUser;
     }
 
+    protected void removeUser(HttpServletRequest req) {
+        req.getSession().removeAttribute("user");
+    }
+
     protected String fetchAdminMode(HttpServletRequest req) {
         return req.getParameter("admin_mode");
     }

@@ -4,10 +4,8 @@ package com.codecool.sketch.servlet;
 import com.codecool.sketch.dao.UserDao;
 import com.codecool.sketch.dao.database.DatabaseUserDao;
 import com.codecool.sketch.model.User;
-import com.codecool.sketch.service.LoginService;
 import com.codecool.sketch.service.UserService;
 import com.codecool.sketch.service.exception.ServiceException;
-import com.codecool.sketch.service.impl.ImplLoginService;
 import com.codecool.sketch.service.impl.ImplUserService;
 
 import javax.servlet.annotation.WebServlet;
@@ -16,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 @WebServlet("/protected/user_edit")
 public class UserEditServlet extends AbstractServlet{
@@ -48,7 +45,9 @@ public class UserEditServlet extends AbstractServlet{
             String role = req.getParameter("role");
 
             userService.validateAdminMode(fetchAdminMode(req));
-            userService.modify(userId, userName, password, role);
+            if (userService.modify(userId, userName, password, role)) {
+                req.getSession().invalidate();
+            }
 
             sendMessage(resp, HttpServletResponse.SC_OK, "User modified");
         } catch (SQLException | ServiceException ex) {

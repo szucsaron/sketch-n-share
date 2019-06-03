@@ -1,6 +1,5 @@
 package com.codecool.sketch.dao;
 
-import com.codecool.sketch.dto.FolderOwnerDto;
 import com.codecool.sketch.model.Folder;
 
 import java.sql.SQLException;
@@ -10,8 +9,6 @@ public interface FolderDao {
     List<Folder> fetchByUserId(int userId) throws SQLException;
 
     List<Folder> fetchAll() throws SQLException;
-
-    List<FolderOwnerDto> fetchAllOwnedDtos() throws SQLException;
 
     List<Folder> fetchAllShared(int userId) throws SQLException;
 

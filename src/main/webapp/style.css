@@ -1,3 +1,21 @@
+
+td {
+    border-style: solid;
+}
+
+table {
+    width: 70% ;
+}
+
+td {
+    width: 8% ;
+}
+
+img {
+    max-width: 50%;
+    max-height: 50%;
+}
+
 .error {
     color: red;
 }
@@ -15,39 +33,6 @@
     height: auto;
 }
 
-/*body {
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-image: url('clock.gif');
-}*/
-
-td {
-    border-style: solid;
-}
-
-table {
-    width: 70% ;
-}
-td {
-    width: 8% ;
-}
-
-#bin {
-    padding-left: 75%;
-}
-
-#scheduleTable{
-    float:left;
-}
-#toolbox {
-    padding-left: 75%;
-}
-
-img {
-    max-width: 50%;
-    max-height: 50%;
-}
-
 .unselectable {
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
@@ -58,11 +43,6 @@ img {
 
 .taskButton {
     width: 300px;
-}
-
-
-#task-title {
-    width: 254px;
 }
 
 .draw_object {
@@ -81,7 +61,6 @@ img {
     left:0%;
     width: 100%;
     height: 1024px;
-    /*background-color:white;*/
     color: #000;
     z-index: 0;
 }   
@@ -101,4 +80,19 @@ img {
 #message-bar {
     bottom: 0%;
     color:blue;
+}
+
+#task-title {
+    width: 254px;
+}
+
+#bin {
+    padding-left: 75%;
+}
+
+#scheduleTable{
+    float:left;
+}
+#toolbox {
+    padding-left: 75%;
 }

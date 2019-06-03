@@ -1,7 +1,6 @@
 package com.codecool.sketch.dao.database;
 
 import com.codecool.sketch.dao.FolderDao;
-import com.codecool.sketch.dto.FolderOwnerDto;
 import com.codecool.sketch.model.Folder;
 
 import java.sql.Connection;
@@ -41,7 +40,6 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
         }
     }
 
-
     public List<Folder> fetchAll() throws SQLException {
         String sql = "SELECT folders.*, users.name AS owner_name FROM folders\n" +
                 "LEFT JOIN users ON users.id = folders.owner " +
@@ -52,30 +50,12 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
         }
     }
 
-    public List<FolderOwnerDto> fetchAllOwnedDtos() throws SQLException {
-        String sql = "SELECT folders.*, users.name AS owner_name FROM folders\n" +
-                "LEFT JOIN users ON users.id = folders.owner " +
-                "ORDER BY folders.name";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.execute();
-            ResultSet rs = preparedStatement.getResultSet();
-            List<FolderOwnerDto> folderOwnerDtos = new ArrayList<>();
-            while (rs.next()) {
-                Folder folder = fetchFolder(rs);
-                String owner = rs.getString("owner_name");
-                folderOwnerDtos.add(new FolderOwnerDto(folder, owner));
-            }
-            return folderOwnerDtos;
-        }
-    }
-
-
     public void createNew(String name, int userId) throws SQLException {
         String sql = "INSERT INTO folders (name, owner) VALUES (?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, name);
             preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
+            executeInsert(preparedStatement);
         }
     }
 

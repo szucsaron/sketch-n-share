@@ -4,10 +4,8 @@ package com.codecool.sketch.servlet;
 import com.codecool.sketch.dao.UserDao;
 import com.codecool.sketch.dao.database.DatabaseUserDao;
 import com.codecool.sketch.model.User;
-import com.codecool.sketch.service.LoginService;
 import com.codecool.sketch.service.UserService;
 import com.codecool.sketch.service.exception.ServiceException;
-import com.codecool.sketch.service.impl.ImplLoginService;
 import com.codecool.sketch.service.impl.ImplUserService;
 
 import javax.servlet.annotation.WebServlet;
@@ -33,7 +31,6 @@ public class UsersServlet extends AbstractServlet {
             sendMessage(resp, HttpServletResponse.SC_OK, users);
 
         } catch (ServiceException | SQLException ex) {
-            sendMessage(resp, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
             handleError(resp, ex);
         }
     }
@@ -54,7 +51,6 @@ public class UsersServlet extends AbstractServlet {
             sendMessage(resp, HttpServletResponse.SC_OK, "User created");
 
         } catch (ServiceException | SQLException ex) {
-            sendMessage(resp, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
             handleError(resp, ex);
         }
     }
@@ -68,12 +64,13 @@ public class UsersServlet extends AbstractServlet {
             userService.validateAdminMode(fetchAdminMode(req));
             String id = req.getParameter("user_id");
 
-            userService.delete(id);
+            if (userService.delete(id)) {
+                req.getSession().invalidate();
+            }
 
             sendMessage(resp, HttpServletResponse.SC_OK, "User deleted");
 
         } catch (ServiceException | SQLException ex) {
-            sendMessage(resp, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
             handleError(resp, ex);
         }
     }
