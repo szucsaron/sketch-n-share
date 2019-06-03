@@ -30,12 +30,14 @@ CREATE TABLE users (
 	password VARCHAR(200),
 	role NUMERIC(1)
 );
+CREATE INDEX users_name_index ON users(name);
 
 CREATE TABLE folders (
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(100),
 	owner INT REFERENCES users(id) ON DELETE CASCADE
 );
+CREATE INDEX folders_name_index ON folders(name);
 
 CREATE TABLE sketches (
 	id SERIAL PRIMARY KEY,
@@ -57,7 +59,6 @@ The following functions are used to simplify table insertions and updates where 
 would normally call for multiple SQL queries made by the db client. Using these functions requires
 only a single query, and everything else is taken care of at db level. 
 In the params, 'owner' stands for the user id of the function caller needed to be verified.
-In case of illegal owners, the functions throw exceptions.
 
 */
 
@@ -166,9 +167,12 @@ LANGUAGE plpgsql;
 CREATE FUNCTION validate_folder_update() RETURNS trigger
 AS '
 BEGIN
-	IF (SELECT id FROM folders 
-		WHERE name = NEW.name AND owner = NEW.owner LIMIT 1) IS NOT NULL THEN
-		RAISE EXCEPTION ''Folder name must be unique!'';
+	IF (SELECT name FROM folders WHERE id = NEW.id) != NEW.name OR
+	   (SELECT owner FROM folders WHERE id = NEW.id) != NEW.owner THEN
+		IF (SELECT id FROM folders 
+			WHERE name = NEW.name AND owner = NEW.owner LIMIT 1) IS NOT NULL THEN
+			RAISE EXCEPTION ''Folder name must be unique!'';
+		END IF;
 	END IF;
 	RETURN NEW;
 END;'
@@ -182,9 +186,11 @@ FOR EACH ROW EXECUTE PROCEDURE validate_folder_update();
 CREATE FUNCTION validate_sketch_update() RETURNS trigger
 AS '
 BEGIN
-	IF (SELECT id FROM sketches 
-		WHERE name = NEW.name AND folders_id = NEW.folders_id LIMIT 1) IS NOT NULL THEN
-		RAISE EXCEPTION ''Sketch name must be unique'';
+	IF (SELECT name FROM sketches WHERE id = NEW.id) != NEW.name THEN
+		IF (SELECT id FROM sketches 
+			WHERE name = NEW.name AND folders_id = NEW.folders_id LIMIT 1) IS NOT NULL THEN
+			RAISE EXCEPTION ''Sketch name must be unique'';
+		END IF;
 	END IF;
 	RETURN NEW;
 END;'

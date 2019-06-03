@@ -19,7 +19,8 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
     public List<Folder> fetchByUserId(int userId) throws SQLException {
         String sql = "SELECT folders.*, users.name AS owner_name FROM folders " +
                 "LEFT JOIN users ON users.id = owner " +
-                "WHERE owner = ?";
+                "WHERE owner = ? " +
+                "ORDER BY folders.name";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, userId);
             preparedStatement.execute();
@@ -31,7 +32,8 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
         String sql = "SELECT folders.*, users.name AS owner_name FROM folders " +
                 "LEFT JOIN shares ON folders.id = folders_id " +
                 "LEFT JOIN users ON users.id = owner " +
-                "WHERE users_id = ?";
+                "WHERE users_id = ? " +
+                "ORDER BY folders.name";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, userId);
             preparedStatement.execute();
@@ -42,7 +44,8 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
 
     public List<Folder> fetchAll() throws SQLException {
         String sql = "SELECT folders.*, users.name AS owner_name FROM folders\n" +
-                "LEFT JOIN users ON users.id = folders.owner";
+                "LEFT JOIN users ON users.id = folders.owner " +
+                "ORDER BY folders.name";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.execute();
             return executeMultipleFetch(preparedStatement);
@@ -51,7 +54,8 @@ public class DatabaseFolderDao extends DatabaseAbstractDao implements FolderDao 
 
     public List<FolderOwnerDto> fetchAllOwnedDtos() throws SQLException {
         String sql = "SELECT folders.*, users.name AS owner_name FROM folders\n" +
-                "LEFT JOIN users ON users.id = folders.owner";
+                "LEFT JOIN users ON users.id = folders.owner " +
+                "ORDER BY folders.name";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.execute();
             ResultSet rs = preparedStatement.getResultSet();
