@@ -1,6 +1,7 @@
 1. Create a database named 'sketch_n_share'
-2. Compile with Maven and deploy via tomcat.
-3. The following user accounts are readily available for logging in:
+2. Rewrite pom.xml passwords to fit your needs
+3. Compile with Maven and deploy via tomcat.
+4. The following user accounts are readily available for logging in:
 	(name, password)
 
 - Admin users:
