@@ -1,5 +1,6 @@
 -- FUNCTION AND TABLE DROP
 
+
 DROP TRIGGER IF EXISTS validate_user_delete ON users;
 DROP FUNCTION IF EXISTS validate_user_delete;
 
@@ -239,15 +240,15 @@ FOR EACH ROW EXECUTE PROCEDURE validate_user_delete();
 
 -- Create root superuser
 INSERT INTO users (id, name, password, role) VALUES
-(0, 'root', '1234', '1');
+(0, 'root', '12345678', '1');
 
 -- Create normal users
 INSERT INTO users (name, password, role) VALUES 
 ('a', 'a', '1'), --1
 ('b', 'a', '0'), --2
-('Joe', 'a', '0'), --3
-('Rose', 'a', '0'), --4
-('Vladimir', 'a', '0') --5
+('Joe', '2345', '0'), --3
+('Rose', '4567', '0'), --4
+('Vladimir', '5678', '0') --5
 ;
 
 
