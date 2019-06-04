@@ -84,21 +84,21 @@ Servlet paths and restful methods
         return: Sketch
 
 /protected/users
-    GET: get a list of all users
+    x GET: get a list of all users
         params: -
         return List<User> (sent without password for safety reasons)
-    POST: create a new empty user
+    x POST: create a new empty user
         params: user_name, password, role
         return: MessageDto
-    DELETE: delete an existing user
+    x DELETE: delete an existing user
         params: user_id
         return: MessageDto
 
 /protected/user_edit
-    GET: get a user
+    x GET: get a user
         params: user_id
         return: User
 
-    POST: modify an existing user
+    x POST: modify an existing user
         params: user_id, user_name, password, role
         return: MessageDto
