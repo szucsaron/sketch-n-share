@@ -29,7 +29,7 @@ Servlet paths and restful methods
 		return: MessageDto
 
 /protected/folder_owner
-    PUT: change folder ownership
+    x PUT: change folder ownership
         params: folder_id, owner_name
         return: MessageDto
 
